@@ -1,0 +1,101 @@
+substitutions:
+  name: dryer
+  upper_name: Dryer
+  init: 'component_geUART::instance(id(uart_bus));'
+
+esphome:
+  name: dryer
+  platform: ESP32
+  board: nodemcu-32s
+  includes:
+    - esphome-ge-dryer-uart.h
+
+# Enable logging via web interface only
+logger:
+  baud_rate: 0
+
+# Enable Home Assistant API
+api:
+
+ota:
+  password: !secret esp_home_ota_pw
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_pw
+  
+  # Optional manual IP
+  #manual_ip:
+    static_ip: 192.168.0.191
+    gateway: 192.168.0.9
+    subnet: 255.255.255.0
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: ${upper_name} Fallback Hotspot
+    password: !secret esp_home_captive_pw
+
+captive_portal:
+
+# Sync time with Home Assistant.
+time:
+  - platform: homeassistant
+    id: homeassistant_time
+
+uart:
+  id: uart_bus
+  tx_pin: 
+    number: GPIO17
+    inverted: true
+  rx_pin: 
+    number: GPIO16
+    inverted: true
+  baud_rate: 19200
+  debug:
+    direction: RX
+    after:
+        timeout: 100ms
+    sequence:
+      - lambda:  UARTDebug::log_hex(direction, bytes, ':');
+  
+custom_component:
+  - lambda: |-
+      auto c_ge_uart = ${init}
+      return {c_ge_uart};
+
+sensor:
+  # Uptime sensor.
+  - platform: uptime
+    name: ${upper_name} Uptime
+
+  # WiFi Signal sensor.
+  - platform: wifi_signal
+    name: ${upper_name} WiFi Signal
+    update_interval: 60s
+  - platform: custom
+    lambda: |-
+      auto c_ge_uart = ${init}
+      return {
+        c_ge_uart->sensor_remainingtime
+      };
+    sensors:
+      - name: ${upper_name} Time Remaining
+        unit_of_measurement: min
+        accuracy_decimals: 1
+
+
+# Text sensors with general information.
+text_sensor:
+  # Expose WiFi information as sensors.
+  - platform: wifi_info
+    ip_address:
+      name: ${upper_name} IP
+  - platform: custom
+    lambda: |-
+        auto c_ge_uart = ${init}
+        return {
+          c_ge_uart->textsensor_dryerState
+          };
+    text_sensors:
+        - name: ${upper_name} State
+  
