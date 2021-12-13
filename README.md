@@ -5,7 +5,8 @@ Current Status:
 
 - ESP32 interface circuit built on breadboard for testing.  Debugging the serial connection.
 
-  ![dryer testing](.\dryer testing.jpg)
+![dryer testing](https://user-images.githubusercontent.com/10102873/145743746-fe5fa78a-a61d-4de0-bebb-4f3287017479.jpg)
+
 
 TODO:
 
