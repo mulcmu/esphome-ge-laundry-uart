@@ -4,6 +4,9 @@
 //https://github.com/mannkind/ESPHomeRoombaComponent
 
 #include "esphome.h"
+#include <vector>
+//#include "uart_debugger.h"
+
 
 static const char *TAG = "component.ge_UART";
 
@@ -53,18 +56,21 @@ class component_geUART :
     {
         ESP_LOGV(TAG, "update().");
 
-        int16_t distance;
-        uint16_t voltage;
-        bool publishJson;
-        
         while ( available() ) {
-            char c = read();
+            uint8_t b;
+            read_byte(&b);
+            rx_buf.push_back(b);
+            if(rx_buf.size() == rx_buf.capacity() )  {
+                //UARTDevice::UARTDebug::log_hex(UARTDevice::UARTDebug::UART_DIRECTION_RX , rx_buf, ':');
+                rx_buf.clear();            
+            }
+                
         }
        
-        //if(millis() - millisProgress > PROGRESS_INTERVAL)  {
-        //    write_str("M27\r\nM31\r\n");
-        //    millisProgress = millis();
-        //}
+        if(millis() - millisProgress > 150)  {
+            write_str("M27\r\nM31\r\n");
+            millisProgress = millis();
+        }
 
     }
 
@@ -75,6 +81,11 @@ class component_geUART :
         
   private: 
     String StateText;
+    
+    unsigned long millisProgress=0;
+    
+    std::vector<uint8_t> rx_buf; 
+    std::vector<uint8_t> tx_buf; 
    
     component_geUART(UARTComponent *parent) : PollingComponent(2000), UARTDevice(parent) 
     {
