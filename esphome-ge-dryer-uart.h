@@ -39,7 +39,7 @@ class component_geUART :
     {
         ESP_LOGD(TAG, "setup().");
         
-        StateText.reserve(32);
+        //StateText.reserve(32);
          
         //flush();
         //write_str("\r\n\r\nM155 S10\r\n");  //TODO any setup tx writes
@@ -68,7 +68,7 @@ class component_geUART :
         }
        
         if(millis() - millisProgress > 150)  {
-            write_str("M27\r\nM31\r\n");
+            //write_str("M27\r\nM31\r\n");
             millisProgress = millis();
         }
 
@@ -80,7 +80,7 @@ class component_geUART :
 
         
   private: 
-    String StateText;
+    //String StateText;
     
     unsigned long millisProgress=0;
     

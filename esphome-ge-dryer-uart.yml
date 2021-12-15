@@ -12,7 +12,7 @@ esphome:
   
 # Enable logging via web interface only
 logger:
-  baud_rate: 0
+  baud_rate: 115200
 
 # Enable Home Assistant API
 api:

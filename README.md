@@ -3,9 +3,10 @@ Work in progress for integrating a GE Wifi enabled dryer with Home Assistant usi
 
 Current Status:
 
-- ESP32 interface circuit built on breadboard for testing.  Debugging the serial connection.
+- ESP32 interface circuit built on breadboard for testing.  Debugging the serial connection.  The TXS0104E level shifting chip works okay when testing as loopback but ESP32 doesn't receive any data from the dryer.  Chip has internal 10k pull-up so no easy work around.  2N7000 level shifting circuit didn't work either.  No data from dryer.
+- Dryer sends these packets: `E2:BF:0B:24:A0:01:60:03:9B:51:E3:E2:BF:0B:24:A0:01:60:03:9B:51:E3:E2:BF:0B:24:A0:01:60:03:9B:51:E3` about once a second.   *ESP32 inputs are 5v tolerant so RX can be hooked right to dryer 5v signal*.
 
-![dryer testing](https://user-images.githubusercontent.com/10102873/145743746-fe5fa78a-a61d-4de0-bebb-4f3287017479.jpg)
+
 
 
 TODO:
