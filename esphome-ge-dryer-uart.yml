@@ -54,9 +54,10 @@ uart:
   debug:
     direction: BOTH
     after:
-        timeout: 100ms
+        timeout: 50ms
+        delimiter: [0xE3]
     sequence:
-      - lambda:  UARTDebug::log_hex(direction, bytes, ':');
+      - lambda:  UARTDebug::log_hex(direction, bytes, ' ');
   
 custom_component:
   - lambda: |-
@@ -99,3 +100,21 @@ text_sensor:
     text_sensors:
         - name: ${upper_name} State
   
+
+#turn on blue led when connected to wifi
+output:
+  - platform: gpio
+    pin: GPIO2
+    id: onboard_led
+    inverted: True
+
+interval:
+  - interval: 1s
+    then:
+      if:
+        condition:
+          wifi.connected:
+        then:
+          - output.turn_on: onboard_led
+        else:
+          - output.turn_off: onboard_led
