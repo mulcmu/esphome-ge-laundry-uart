@@ -51,13 +51,14 @@ uart:
     number: GPIO16
     inverted: true
   baud_rate: 19200
+#hack to get USE_UART_DEBUGGER defined
   debug:
     direction: BOTH
     after:
         timeout: 50ms
         delimiter: [0xE3]
     sequence:
-      - lambda:  UARTDebug::log_hex(direction, bytes, ' ');
+      - lambda:  ;
   
 custom_component:
   - lambda: |-

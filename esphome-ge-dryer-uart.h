@@ -3,9 +3,11 @@
 //ESPHomeRoombaComponent/ESPHomeRoombaComponent.h
 //https://github.com/mannkind/ESPHomeRoombaComponent
 
+#define USE_UART_DEBUGGER
+
 #include "esphome.h"
 #include <vector>
-//#include "uart_debugger.h"
+#include "esphome/components/uart/uart_debugger.h"
 
 
 static const char *TAG = "component.ge_UART";
@@ -39,8 +41,10 @@ class component_geUART :
     {
         ESP_LOGD(TAG, "setup().");
         
-        //StateText.reserve(32);
-         
+        StateText.reserve(32);
+        rx_buf.reserve(128);
+        tx_buf.reserve(128);
+        
         //flush();
         //write_str("\r\n\r\nM155 S10\r\n");  //TODO any setup tx writes
         
@@ -48,20 +52,28 @@ class component_geUART :
         sensor_remainingtime->publish_state(NAN);
         
         //TODO HA services if needed, keep tumbling or wrinkle care ???
-        //register_service(&component_geUART::set_bed_setpoint, "set_bed_setpoint",
-        //{"temp_degC"});
+        //register_service(&component_geUART::set_bed_setpoint, "set_bed_setpoint", {"temp_degC"});
      }
 
     void update() override
     {
         ESP_LOGV(TAG, "update().");
 
+        //Debug, try to print out separate packets
         while ( available() ) {
-            uint8_t b;
             read_byte(&b);
+
+            if( (b == 0xe2) && (last_b==0xe1 || last_b==0xe3) )  {
+                uart::UARTDebug::log_hex(uart::UARTDirection::UART_DIRECTION_RX , rx_buf, ':');
+                rx_buf.clear();            
+            }
+            
+            last_b=b;
             rx_buf.push_back(b);
+            
             if(rx_buf.size() == rx_buf.capacity() )  {
-                //UARTDevice::UARTDebug::log_hex(UARTDevice::UARTDebug::UART_DIRECTION_RX , rx_buf, ':');
+                ESP_LOGV(TAG, "rx_buf was filled!");
+                uart::UARTDebug::log_hex(uart::UARTDirection::UART_DIRECTION_RX , rx_buf, ':');
                 rx_buf.clear();            
             }
                 
@@ -80,8 +92,9 @@ class component_geUART :
 
         
   private: 
-    //String StateText;
-    
+    String StateText;
+    uint8_t b=0;
+    uint8_t last_b=0;
     unsigned long millisProgress=0;
     
     std::vector<uint8_t> rx_buf; 
