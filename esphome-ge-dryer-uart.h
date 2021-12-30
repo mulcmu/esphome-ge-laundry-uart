@@ -57,14 +57,15 @@ class component_geUART :
 
     void update() override
     {
-        ESP_LOGV(TAG, "update().");
+        //ESP_LOGV(TAG, "update().");
 
         //Debug, try to print out separate packets
         while ( available() ) {
             read_byte(&b);
 
             if( (b == 0xe2) && (last_b==0xe1 || last_b==0xe3) )  {
-                uart::UARTDebug::log_hex(uart::UARTDirection::UART_DIRECTION_RX , rx_buf, ':');
+                uart::UARTDebug::log_hex(uart::UARTDirection::UART_DIRECTION_RX , rx_buf, ' ');
+                process_packet();                
                 rx_buf.clear();            
             }
             
@@ -106,6 +107,61 @@ class component_geUART :
         this->sensor_remainingtime = new Sensor();
         this->textsensor_dryerState = new TextSensor();
 
+    }
+    
+    void process_packet()  {
+        
+        //DEBUG RX: <E2 BE 0D 24 F5 01 20 0A 01 8C 45 80 E3 E1>
+        //INFO Parsed: <GEAFrame(src=0x24, dst=0xBE, payload=<F5 01 20 0A 01 8C>, ack=True>
+        //INFO Parsed payload: <ERDCommand(command=<ERDCommandID.PUBLISH: 0xF5>, erds=[0x200A:<8C>])>
+        if(rx_buf.size() > 9)  {
+            if(rx_buf[4]==0xF5 && rx_buf[6]==0x20 && rx_buf[7]==0x0A)  {
+            ESP_LOGI(TAG, "Found ERD 0x200A with published value: %X", rx_buf[9]);
+                switch (rx_buf[9])  {
+                    case 0x89:
+                        textsensor_dryerState->publish_state("Mixed Load");
+                        break;
+                    case 0x0D:
+                        textsensor_dryerState->publish_state("Delicates");
+                        break;
+                    case 0x80:
+                        textsensor_dryerState->publish_state("Cottons");
+                        break;
+                    case 0x0B:
+                        textsensor_dryerState->publish_state("Jeans");
+                        break;
+                    case 0x8B:
+                        textsensor_dryerState->publish_state("Casuals");
+                        break;
+                    case 0x88:
+                        textsensor_dryerState->publish_state("Quick Dry");
+                        break;
+                    case 0x06:
+                        textsensor_dryerState->publish_state("Towels");
+                        break;
+                    case 0x04:
+                        textsensor_dryerState->publish_state("Bulky");
+                        break;
+                    case 0x05:
+                        textsensor_dryerState->publish_state("Sanitize");
+                        break;
+                    case 0x85:
+                        textsensor_dryerState->publish_state("Air Fluff");
+                        break;
+                    case 0x8C:
+                        textsensor_dryerState->publish_state("Warm Up");
+                        break;
+                    case 0x83:
+                        textsensor_dryerState->publish_state("Timed Dry");
+                        break;
+                    default:
+                        char buf[32];
+                        sprintf(buf, "ERD 200A Unknown %X",rx_buf[9])
+                        textsensor_dryerState->publish_state(buf);
+                }
+                        
+            }
+        }
     }
 
 };
