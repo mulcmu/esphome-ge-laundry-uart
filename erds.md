@@ -2,20 +2,27 @@
 
 *Baseline* ERDS.txt from https://github.com/doitaljosh/ge-appliances-re
 
+**GE docx & code** from hawk dryer interface https://github.com/doitaljosh/ge-appliances-re
+
 ##### Common:
 
-| Erd:     | Function:                  |
-| -------- | -------------------------- |
-| *0x0004* | *LockStatus*               |
-| *0x0006* | *ClockFormat*              |
-| *0x0007* | *TempUnit*                 |
-| *0x0009* |                            |
-| *0x000A* | *SoundLevel*               |
-| 0x0037   | Subscribed ERD on Dryer U+ |
-| *0x0051* |                            |
-| *0x0100* |                            |
-| *0x0103* |                            |
-| *0x510A* |                            |
+| Erd:       | Function:                                                    |
+| ---------- | ------------------------------------------------------------ |
+| **0x0001** | **modelNumber<br />Ascii**                                   |
+| **0x0002** | **serialNumber<br />Ascii**                                  |
+| **0x0003** | **remoteEnable**                                             |
+| *0x0004*   | *LockStatus*                                                 |
+| **0x0005** | **clockTime<br />            "hours:UInt8",<br/>            "minutes:UInt8",<br/>            "seconds:UInt8",** |
+| *0x0006*   | *ClockFormat*                                                |
+| *0x0007*   | *TempUnit*                                                   |
+| **0x0008** | **Appliance type**                                           |
+| *0x0009*   | **sabbathMode**                                              |
+| *0x000A*   | *SoundLevel*                                                 |
+| 0x0037     | Subscribed ERD on Dryer U+                                   |
+| *0x0051*   |                                                              |
+| *0x0100*   |                                                              |
+| *0x0103*   |                                                              |
+| *0x510A*   |                                                              |
 
 ##### Advantium:
 
@@ -30,53 +37,59 @@
 
 ##### Laundry:
 
-| Erd:     | Function:                                                    |
-| -------- | ------------------------------------------------------------ |
-| *0x2000* | *StateDetail*<br />Dryer subscribed                          |
-| *0x2001* | *SubCycle*<br />Dryer subscribed                             |
-| 0x2002   | Dryer subscribed                                             |
-| *0x2007* |                                                              |
-| *0x2008* | *<br/>	1: labelFirstTank<br/>	2: labelSecondTank<br/>	3: statusFirstTank<br/>	4: statusSecondTank* |
-| *0x2009* | *<br/>	1: isFirstTankEnable<br/>	2: isSecondTankEnable<br/>	3: labelFirstTank<br/>	4: labelSecondTank* |
-| *0x200A* | *Cycle*<br />Dryer subscribed<br />0x89:Mixed Load   <br />0x0D:Delicates   <br />0x80:Cottons   <br />0x0B:Jeans   <br />0x8B:Casuals   <br />0x88:Quick Dry   <br />0x06:Towels   <br />0x04:Bulky   <br />0x05:Sanitize   <br />0x85:Air Fluff   <br />0x8C:Warm Up   <br />0x83:Timed Dry |
-| *0x2010* | Dryer subscribed                                             |
-| *0x2014* | *IsEnable*                                                   |
-| *0x2015* | *SoilLevel*                                                  |
-| *0x2016* | *TempLevel*                                                  |
-| *0x2017* | *SpinTimeLEvel*                                              |
-| *0x2018* | *RinseOption*                                                |
-| *0x2019* | *Option*                                                     |
-| *0x201A* | *DrynessLevel*                                               |
-| *0x201B* | *IsExtendedTumble*                                           |
-| 0x201D   | Dryer subscribed                                             |
-| *0x2020* | *SelectedCycle*                                              |
-| *0x2021* |                                                              |
-| *0x2022* | *<br/>	1: extraLargeLoadSize<br/>	2: largeLoadSize<br/>	3: mediumLoadSize<br/>	4: smallLoadSize<br/>	5: timedDryerSheetsLoadSize* |
-| *0x2023* | *totalDryerSheetsNo*                                         |
-| 0x2038   | Dryer subscribed                                             |
-| *0x2039* | *<br/>	1: isEnable<br/>	2: status<br/>*<br /><br />Dryer subscribed |
-| *0x204D* | *drynessLevel*<br />Dryer subscribed<br />0x01: Damp<br />0x02: Less Dry<br />0x03: Dry<br />0x04 More Dry |
-| *0x2050* | *~~option~~*<br />Heat Level<br />Dryer subscribed<br />0x01 Air Fluff<br />0x03 Low <br />0x04 Med <br />0x05 High |
-| 0x2051   | Dryer subscribed                                             |
-| *0x2052* | *isExtendedTumbleValid*<br />Dryer subscribed<br />          |
-| *0x2053* | *isExtendedTumble*<br />Dryer subscribed                     |
-| *0x206B* | *selectedCycle*                                              |
-| *0x206C* | *isEnable*                                                   |
-| *0x206E* | *isAllowable*                                                |
-| *0x7003* |                                                              |
-| *0x7A00* | *FanSetting*                                                 |
-| *0x7A01* | *OperationMode*                                              |
-| *0x7A02* |                                                              |
-| *0x7A04* | *Status*                                                     |
-| *0x7A0F* | *OnOffState*                                                 |
-| *0x7B00* |                                                              |
-| *0x7B05* | *SleepMode*                                                  |
-| *0x7B06* |                                                              |
-| *0x7B07* | *AutoSwingMode*                                              |
-| *0x8004* | *ErrorCode*                                                  |
-| *0x8005* |                                                              |
-| *0x8007* | *LowSaltAlert*                                               |
-| *0x8033* | *ShutOffValveState*                                          |
+| Erd:       | Function:                                                    |
+| ---------- | ------------------------------------------------------------ |
+| *0x2000*   | *StateDetail*<br />Dryer subscribed<br />**i.	0 = Idle<br/>ii.	1 = Standby<br/>iii.	2 = Run<br/>iv.	3 = Pause<br/>v.	4 = EOC<br/>vi.	5 = DSMDelayRun<br/>vii.	6 = DelayRun<br/>viii.	7 = DelayPause<br/>ix.	8 = DrainTimeout<br/>x.	9 to 127 =  Not used<br/>xi.	128 = Clean Speak** |
+| *0x2001*   | *SubCycle*<br />Dryer subscribed<br />**i.	0 = Not applicable<br/>ii.	1 = Fill (washer only)<br/>iii.	2 = Soak(washer only)<br/>iv.	3 = Wash (washer only)<br/>v.	4 = Rinse(washer only)<br/>vi.	5 = Spin(washer only)<br/>vii.	6 = Drain(washer only)<br/>viii.	7 = Extra Spin(washer only)<br/>ix.	8 = Extra Rinse(washer only)<br/>x.	9 = Tumble (Dryer only)<br/>xi.	10 = Load Size Detection (washer or dryer)<br/>xii.	11 to 127 = Not used<br/>xiii.	128 =  Drying (dryer)<br/>xiv.	129 =  Mist Steam (dryer)<br/>xv.	130 = Cool Down (dryer)<br/>xvi.	131 = Extended Tumble (dryer)<br/>xvii.	132 = Damp (dryer)<br/>xviii.	133 = Airfluff (dryer)** |
+| 0x2002     | **End of Cycle**<br />Dryer subscribed                       |
+| **0x2003** | **Cycle Count**<br />U16 returned indicating the number of cycles unit has run. |
+|            |                                                              |
+| *0x2007*   | **Cycle Time Remaining**<br />U16 Dryer polls                |
+| *0x2008*   | *<br/>	1: labelFirstTank<br/>	2: labelSecondTank<br/>	3: statusFirstTank<br/>	4: statusSecondTank* |
+| *0x2009*   | *<br/>	1: isFirstTankEnable<br/>	2: isSecondTankEnable<br/>	3: labelFirstTank<br/>	4: labelSecondTank* |
+| *0x200A*   | *Cycle*<br />Dryer subscribed<br />0x89:Mixed Load   <br />0x0D:Delicates   <br />0x80:Cottons   <br />0x0B:Jeans   <br />0x8B:Casuals   <br />0x88:Quick Dry   <br />0x06:Towels   <br />0x04:Bulky   <br />0x05:Sanitize   <br />0x85:Air Fluff   <br />0x8C:Warm Up   <br />0x83:Timed Dry |
+| *0x2010*   | Dryer subscribed                                             |
+| 0x2012     | Dryer Polls                                                  |
+| *0x2014*   | *IsEnable*                                                   |
+| *0x2015*   | *SoilLevel*                                                  |
+| *0x2016*   | *TempLevel*                                                  |
+| *0x2017*   | *SpinTimeLEvel*                                              |
+| *0x2018*   | *RinseOption*                                                |
+| *0x2019*   | *Option*                                                     |
+| *0x201A*   | *DrynessLevel*                                               |
+| *0x201B*   | *IsExtendedTumble*                                           |
+| 0x201C     | Dryer Polls                                                  |
+| 0x201D     | Dryer subscribed                                             |
+| *0x2020*   | *SelectedCycle*                                              |
+| *0x2021*   |                                                              |
+| *0x2022*   | Dryer polls 5 bytes returned*<br/>	1: extraLargeLoadSize<br/>	2: largeLoadSize<br/>	3: mediumLoadSize<br/>	4: smallLoadSize<br/>	5: timedDryerSheetsLoadSize* |
+| *0x2023*   | *totalDryerSheetsNo*<br />Dryer Polls                        |
+| 0x2038     | Dryer subscribed                                             |
+| *0x2039*   | *<br/>	1: isEnable<br/>	2: status<br/>*<br /><br />Dryer subscribed |
+| 0x2040     | Dryer Polls                                                  |
+| 0x2041     | Dryer Polls                                                  |
+| *0x204D*   | *drynessLevel*<br />Dryer subscribed<br />0x01: Damp<br />0x02: Less Dry<br />0x03: Dry<br />0x04 More Dry |
+| *0x2050*   | *~~option~~*<br />Heat Level<br />Dryer subscribed<br />0x01 Air Fluff<br />0x03 Low <br />0x04 Med <br />0x05 High |
+| 0x2051     | Dryer subscribed                                             |
+| *0x2052*   | *isExtendedTumbleValid*<br />Dryer subscribed<br />          |
+| *0x2053*   | *isExtendedTumble*<br />Dryer subscribed                     |
+| *0x206B*   | *selectedCycle*                                              |
+| *0x206C*   | *isEnable*                                                   |
+| *0x206E*   | *isAllowable*                                                |
+| *0x7003*   |                                                              |
+| *0x7A00*   | *FanSetting*                                                 |
+| *0x7A01*   | *OperationMode*                                              |
+| *0x7A02*   |                                                              |
+| *0x7A04*   | *Status*                                                     |
+| *0x7A0F*   | *OnOffState*                                                 |
+| *0x7B00*   |                                                              |
+| *0x7B05*   | *SleepMode*                                                  |
+| *0x7B06*   |                                                              |
+| *0x7B07*   | *AutoSwingMode*                                              |
+| *0x8004*   | *ErrorCode*                                                  |
+| *0x8005*   |                                                              |
+| *0x8007*   | *LowSaltAlert*                                               |
+| *0x8033*   | *ShutOffValveState*                                          |
 
 ##### Dishwasher:
 
@@ -91,3 +104,12 @@
 | *0x304E* |                                                            |
 | 0xD004   |                                                            |
 
+Random erds at end of capture11.txt  Looks like they get polled at 5 min intervals
+
+0xE101 4 bytes
+
+0xE103 8 bytes
+
+0xE119 8 bytes
+
+0xE13B 8 bytes

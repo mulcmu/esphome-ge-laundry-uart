@@ -96,10 +96,12 @@ text_sensor:
     lambda: |-
         auto c_ge_uart = ${init}
         return {
-          c_ge_uart->textsensor_dryerState
+          c_ge_uart->textsensor_dryerState,
+          c_ge_uart->textsensor_dryerCycle
           };
     text_sensors:
         - name: ${upper_name} State
+        - name: ${upper_name} Cycle
   
 
 #turn on blue led when connected to wifi

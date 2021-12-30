@@ -23,6 +23,7 @@ class component_geUART :
     //TODO Unknown at startup, Idle if not running and after door opened, Running while drying, Cycle finished
     //cool down
     TextSensor *textsensor_dryerState;
+    TextSensor *textsensor_dryerCycle;
     
     static component_geUART* instance(UARTComponent *parent)
     {
@@ -49,6 +50,7 @@ class component_geUART :
         //write_str("\r\n\r\nM155 S10\r\n");  //TODO any setup tx writes
         
         textsensor_dryerState->publish_state("Unknown");
+        textsensor_dryerCycle->publish_state("Unknown");
         sensor_remainingtime->publish_state(NAN);
         
         //TODO HA services if needed, keep tumbling or wrinkle care ???
@@ -106,7 +108,7 @@ class component_geUART :
        
         this->sensor_remainingtime = new Sensor();
         this->textsensor_dryerState = new TextSensor();
-
+        this->textsensor_dryerCycle = new TextSensor();
     }
     
     void process_packet()  {
@@ -119,45 +121,45 @@ class component_geUART :
             ESP_LOGI(TAG, "Found ERD 0x200A with published value: %X", rx_buf[9]);
                 switch (rx_buf[9])  {
                     case 0x89:
-                        textsensor_dryerState->publish_state("Mixed Load");
+                        textsensor_dryerCycle->publish_state("Mixed Load");
                         break;
                     case 0x0D:
-                        textsensor_dryerState->publish_state("Delicates");
+                        textsensor_dryerCycle->publish_state("Delicates");
                         break;
                     case 0x80:
-                        textsensor_dryerState->publish_state("Cottons");
+                        textsensor_dryerCycle->publish_state("Cottons");
                         break;
                     case 0x0B:
-                        textsensor_dryerState->publish_state("Jeans");
+                        textsensor_dryerCycle->publish_state("Jeans");
                         break;
                     case 0x8B:
-                        textsensor_dryerState->publish_state("Casuals");
+                        textsensor_dryerCycle->publish_state("Casuals");
                         break;
                     case 0x88:
-                        textsensor_dryerState->publish_state("Quick Dry");
+                        textsensor_dryerCycle->publish_state("Quick Dry");
                         break;
                     case 0x06:
-                        textsensor_dryerState->publish_state("Towels");
+                        textsensor_dryerCycle->publish_state("Towels");
                         break;
                     case 0x04:
-                        textsensor_dryerState->publish_state("Bulky");
+                        textsensor_dryerCycle->publish_state("Bulky");
                         break;
                     case 0x05:
-                        textsensor_dryerState->publish_state("Sanitize");
+                        textsensor_dryerCycle->publish_state("Sanitize");
                         break;
                     case 0x85:
-                        textsensor_dryerState->publish_state("Air Fluff");
+                        textsensor_dryerCycle->publish_state("Air Fluff");
                         break;
                     case 0x8C:
-                        textsensor_dryerState->publish_state("Warm Up");
+                        textsensor_dryerCycle->publish_state("Warm Up");
                         break;
                     case 0x83:
-                        textsensor_dryerState->publish_state("Timed Dry");
+                        textsensor_dryerCycle->publish_state("Timed Dry");
                         break;
                     default:
                         char buf[32];
-                        sprintf(buf, "ERD 200A Unknown %X",rx_buf[9])
-                        textsensor_dryerState->publish_state(buf);
+                        sprintf(buf, "ERD 200A Unknown %X",rx_buf[9]);
+                        textsensor_dryerCycle->publish_state(buf);
                 }
                         
             }
