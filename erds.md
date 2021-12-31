@@ -15,13 +15,28 @@
 | **0x0005** | **clockTime<br />            "hours:UInt8",<br/>            "minutes:UInt8",<br/>            "seconds:UInt8",** |
 | *0x0006*   | *ClockFormat*                                                |
 | *0x0007*   | *TempUnit*                                                   |
-| **0x0008** | **Appliance type**                                           |
+| **0x0008** | **Appliance type**<br />Dryer polls at U+ startup            |
 | *0x0009*   | **sabbathMode**                                              |
 | *0x000A*   | *SoundLevel*                                                 |
+| 0x0035     | U+ Polls<br />[0x0035:<00 00 00 01>]                         |
 | 0x0037     | Subscribed ERD on Dryer U+                                   |
+| 0x0039     | U+ Polls<br />[0x0039:<01 00 03 00>]                         |
+| 0x003A     | U+ Polls<br />0x003A:<01 00 01 2C>]                          |
+| 0x003B     | U+ Polls<br />[0x003B:<01 2C 01 00>]                         |
 | *0x0051*   |                                                              |
+| 0x0089     | U+ attempts to poll                                          |
+| 0x008F     | U+ Power on broadcast                                        |
+| 0x0090     | U+ Polls<br />0x0090:<E0 00 01 00>]                          |
+| 0x0094     | U+ Power on broadcast                                        |
+| 0x0095     | U+ Power on broadcast                                        |
+| 0x0096     | U+ Power on broadcast                                        |
+| 0x0097     | U+ Power on broadcast                                        |
+| 0x0099     | U+ Power on broadcast                                        |
 | *0x0100*   |                                                              |
 | *0x0103*   |                                                              |
+| 0x0106     | U+ attempts to subscribe at boot<br />Attempts to poll later |
+| 0x107      | U+ attempts to subscribe at boot<br />Attempts to poll later |
+| 0x0108     | U+ Power on broadcast                                        |
 | *0x510A*   |                                                              |
 
 ##### Advantium:
@@ -43,13 +58,16 @@
 | *0x2001*   | *SubCycle*<br />Dryer subscribed<br />**i.	0 = Not applicable<br/>ii.	1 = Fill (washer only)<br/>iii.	2 = Soak(washer only)<br/>iv.	3 = Wash (washer only)<br/>v.	4 = Rinse(washer only)<br/>vi.	5 = Spin(washer only)<br/>vii.	6 = Drain(washer only)<br/>viii.	7 = Extra Spin(washer only)<br/>ix.	8 = Extra Rinse(washer only)<br/>x.	9 = Tumble (Dryer only)<br/>xi.	10 = Load Size Detection (washer or dryer)<br/>xii.	11 to 127 = Not used<br/>xiii.	128 =  Drying (dryer)<br/>xiv.	129 =  Mist Steam (dryer)<br/>xv.	130 = Cool Down (dryer)<br/>xvi.	131 = Extended Tumble (dryer)<br/>xvii.	132 = Damp (dryer)<br/>xviii.	133 = Airfluff (dryer)** |
 | 0x2002     | **End of Cycle**<br />Dryer subscribed                       |
 | **0x2003** | **Cycle Count**<br />U16 returned indicating the number of cycles unit has run. |
-|            |                                                              |
+| **0x2004** | **Service Error Codes **                                     |
+| **0x2005** | **Demand Response Overrides Allowed**                        |
 | *0x2007*   | **Cycle Time Remaining**<br />U16 Dryer polls                |
 | *0x2008*   | *<br/>	1: labelFirstTank<br/>	2: labelSecondTank<br/>	3: statusFirstTank<br/>	4: statusSecondTank* |
 | *0x2009*   | *<br/>	1: isFirstTankEnable<br/>	2: isSecondTankEnable<br/>	3: labelFirstTank<br/>	4: labelSecondTank* |
 | *0x200A*   | *Cycle*<br />Dryer subscribed<br />0x89:Mixed Load   <br />0x0D:Delicates   <br />0x80:Cottons   <br />0x0B:Jeans   <br />0x8B:Casuals   <br />0x88:Quick Dry   <br />0x06:Towels   <br />0x04:Bulky   <br />0x05:Sanitize   <br />0x85:Air Fluff   <br />0x8C:Warm Up   <br />0x83:Timed Dry |
-| *0x2010*   | Dryer subscribed                                             |
-| 0x2012     | Dryer Polls                                                  |
+| **0x200E** | **Operating Mode**<br/>i.	0 = Consumer Mode<br/>ii.	1 = Service Mode<br/>iii.	2 = Native Mode<br/>iv.	3 = Continuous Cycle/Evaluation Mode<br/>v.	4 - Rapid Relay Mode<br/>vi.	5 = FCT Mode (EOL on M1 Laundry)<br/>vii.	6 = Model Plug Entry Mode<br/>viii.	7 = Demo Mode<br/>ix.	8 = Consumer Error Mode<br/>x.	9 = Floor Type Selection Mode |
+| **0x200F** | **Critical Response**                                        |
+| *0x2010*   | **Delay Time Remaining** (resolution minutes)<br />Dryer subscribed<br /> |
+| 0x2012     | Dryer Polls<br />1 at startup                                |
 | *0x2014*   | *IsEnable*                                                   |
 | *0x2015*   | *SoilLevel*                                                  |
 | *0x2016*   | *TempLevel*                                                  |
@@ -113,3 +131,11 @@ Random erds at end of capture11.txt  Looks like they get polled at 5 min interva
 0xE119 8 bytes
 
 0xE13B 8 bytes
+
+
+
+Capture 1 read near start
+
+0xE000
+
+[0xE100:<00 01 01 00 00 1F 00 0A 00 10 00 14>
