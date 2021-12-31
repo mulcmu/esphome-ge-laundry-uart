@@ -116,7 +116,7 @@ class component_geUART :
         //DEBUG RX: <E2 BE 0D 24 F5 01 20 0A 01 8C 45 80 E3 E1>
         //INFO Parsed: <GEAFrame(src=0x24, dst=0xBE, payload=<F5 01 20 0A 01 8C>, ack=True>
         //INFO Parsed payload: <ERDCommand(command=<ERDCommandID.PUBLISH: 0xF5>, erds=[0x200A:<8C>])>
-        if(rx_buf.size() > 9)  {
+        if(rx_buf.size() > 12)  {
             if(rx_buf[4]==0xF5 && rx_buf[6]==0x20 && rx_buf[7]==0x0A)  {
             ESP_LOGI(TAG, "Found ERD 0x200A with published value: %X", rx_buf[9]);
                 switch (rx_buf[9])  {
@@ -163,7 +163,20 @@ class component_geUART :
                 }
                         
             }
+        
+            //DEBUG RX: <E2 BE 0E 24 F0 01 20 07 02 0B EA 72 3F E3 E1>
+            //INFO Parsed: <GEAFrame(src=0x24, dst=0xBE, payload=<F0 01 20 07 02 0B EA>, ack=True>
+            //INFO Parsed payload: <ERDCommand(command=<ERDCommandID.READ: 0xF0>, erds=[0x2007:<0B EA>])>        
+            if(rx_buf[4]==0xF0 && rx_buf[6]==0x20 && rx_buf[7]==0x07)  {
+                uint16_t seconds = (uint16_t)(rx_buf[9]) << 8 | (uint16_t)rx_buf[10];
+                float minutes = seconds / 60.0;
+                sensor_remainingtime->publish_state(minutes);
+            }
         }
+        
+
+        
+        
     }
 
 };
