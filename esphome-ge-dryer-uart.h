@@ -19,11 +19,13 @@ class component_geUART :
 
   public:
     Sensor *sensor_remainingtime;
-
-    //TODO Unknown at startup, Idle if not running and after door opened, Running while drying, Cycle finished
-    //cool down
     TextSensor *textsensor_dryerState;
+    TextSensor *textsensor_dryerSubState;
     TextSensor *textsensor_dryerCycle;
+    TextSensor *textsensor_endOfCycle;
+    TextSensor *textsensor_DrynessSetting;
+    TextSensor *textsensor_HeatSetting;   
+
     
     static component_geUART* instance(UARTComponent *parent)
     {
@@ -42,29 +44,25 @@ class component_geUART :
     {
         ESP_LOGD(TAG, "setup().");
         
-        StateText.reserve(32);
         rx_buf.reserve(128);
-        tx_buf.reserve(128);
-        
-        //flush();
-        //write_str("\r\n\r\nM155 S10\r\n");  //TODO any setup tx writes
         
         textsensor_dryerState->publish_state("Unknown");
         textsensor_dryerCycle->publish_state("Unknown");
-        sensor_remainingtime->publish_state(NAN);
+        textsensor_dryerSubState->publish_state("Unknown");
+        textsensor_endOfCycle->publish_state("Unknown");
+        textsensor_DrynessSetting->publish_state("Unknown");
+        textsensor_HeatSetting->publish_state("Unknown");   
         
-        //TODO HA services if needed, keep tumbling or wrinkle care ???
-        //register_service(&component_geUART::set_bed_setpoint, "set_bed_setpoint", {"temp_degC"});
-     }
+        sensor_remainingtime->publish_state(NAN);
+    }
 
     void update() override
     {
-        //ESP_LOGV(TAG, "update().");
 
-        //Debug, try to print out separate packets
         while ( available() ) {
             read_byte(&b);
 
+            //TODO find a better way to get final e3 and send e1 ack on time
             if( (b == 0xe2) && (last_b==0xe1 || last_b==0xe3) )  {
                 uart::UARTDebug::log_hex(uart::UARTDirection::UART_DIRECTION_RX , rx_buf, ' ');
                 process_packet();                
@@ -82,43 +80,175 @@ class component_geUART :
                 
         }
        
-        if(millis() - millisProgress > 150)  {
-            //write_str("M27\r\nM31\r\n");
+        if(millis() - millisProgress > 2000)  {
+
+            switch(erd) {
+            case 0:
+                write_array(erd2000);
+                erd=1;
+                break;
+             case 1:
+                write_array(erd2001);
+                erd=2;
+                break;
+            case 2:
+                write_array(erd2002);
+                erd=3;
+                break;
+            case 3:
+                write_array(erd2007);
+                erd=4;
+                break;
+            case 4:
+                write_array(erd200A);
+                erd=5;
+                break;
+            case 5:
+                write_array(erd204D);
+                erd=6;
+                break;
+            case 6:
+                write_array(erd2050);
+                erd=0;
+                break;    
+            }                
             millisProgress = millis();
         }
 
     }
 
-//    void set_bed_setpoint(int temp_degC) {
-//       ESP_LOGD(TAG, "set_bed_setpoint().");
-//    }
-
         
   private: 
-    String StateText;
     uint8_t b=0;
     uint8_t last_b=0;
     unsigned long millisProgress=0;
+    uint8_t erd=0;
     
     std::vector<uint8_t> rx_buf; 
-    std::vector<uint8_t> tx_buf; 
+    std::vector<uint8_t> tx_buf;
+    
+    //Hardcoded packets to read these ERDs
+    //U+ connect uses 0xBE, dryer sends to 0xBF
+    //use 0xBB
+    std::vector<uint8_t> erd2000= {0xe2, 0x24, 0xb, 0xbb, 0xf0, 0x1, 0x20, 0x00, 0x47, 0x1b, 0xe3};   //Dryer State
+    std::vector<uint8_t> erd2001= {0xe2, 0x24, 0xb, 0xbb, 0xf0, 0x1, 0x20, 0x01, 0x57, 0x3a, 0xe3};   //Sub state
+    std::vector<uint8_t> erd2002= {0xe2, 0x24, 0xb, 0xbb, 0xf0, 0x1, 0x20, 0x02, 0x67, 0x59, 0xe3};   //End of cycle
+    std::vector<uint8_t> erd2007= {0xe2, 0x24, 0xb, 0xbb, 0xf0, 0x1, 0x20, 0x07, 0x37, 0xfc, 0xe3};   //Cycle time remaining
+    std::vector<uint8_t> erd200A= {0xe2, 0x24, 0xb, 0xbb, 0xf0, 0x1, 0x20, 0x0a, 0xe6, 0x51, 0xe3};   //Cycle Setting
+    std::vector<uint8_t> erd204D= {0xe2, 0x24, 0xb, 0xbb, 0xf0, 0x1, 0x20, 0x4d, 0xde, 0x72, 0xe3};   //Dryness Setting
+    std::vector<uint8_t> erd2050= {0xe2, 0x24, 0xb, 0xbb, 0xf0, 0x1, 0x20, 0x50, 0x1d, 0xee, 0xe3};   //Heat Setting
+    
    
-    component_geUART(UARTComponent *parent) : PollingComponent(2000), UARTDevice(parent) 
+    component_geUART(UARTComponent *parent) : PollingComponent(200), UARTDevice(parent) 
     {
-       
         this->sensor_remainingtime = new Sensor();
         this->textsensor_dryerState = new TextSensor();
+        this->textsensor_dryerSubState = new TextSensor();
         this->textsensor_dryerCycle = new TextSensor();
+        this->textsensor_endOfCycle = new TextSensor();
+        this->textsensor_DrynessSetting = new TextSensor();
+        this->textsensor_HeatSetting = new TextSensor();        
     }
     
     void process_packet()  {
+        if(rx_buf[1]!=0xBB)
+            return;
         
-        //DEBUG RX: <E2 BE 0D 24 F5 01 20 0A 01 8C 45 80 E3 E1>
-        //INFO Parsed: <GEAFrame(src=0x24, dst=0xBE, payload=<F5 01 20 0A 01 8C>, ack=True>
-        //INFO Parsed payload: <ERDCommand(command=<ERDCommandID.PUBLISH: 0xF5>, erds=[0x200A:<8C>])>
+        if(rx_buf[4]!=0xF0 || rx_buf[6]!=0x20)
+            return;
+        
         if(rx_buf.size() > 12)  {
-            if(rx_buf[4]==0xF5 && rx_buf[6]==0x20 && rx_buf[7]==0x0A)  {
-            ESP_LOGI(TAG, "Found ERD 0x200A with published value: %X", rx_buf[9]);
+            //0x2000:  E2 BB 0D 24 F0 01 20 00 01 00 E6 88 E3
+            if(rx_buf[7]==0x00)  {
+                ESP_LOGD(TAG, "erd x2000: %X", rx_buf[9]);
+                switch (rx_buf[9])  {
+                    case 0x00: //Idle screen off
+                    case 0x01: //Standby, display on
+                        textsensor_dryerState->publish_state("Off");
+                        break;
+                    case 0x02: //Run
+                        textsensor_dryerState->publish_state("Running");
+                        break;                    
+                    case 0x03: //Paused
+                        textsensor_dryerState->publish_state("Paused");
+                        break;                    
+                    case 0x04: //EOC<br/>
+                        textsensor_dryerState->publish_state("Done");
+                        break;                    
+                    default:
+                        char buf[32];
+                        sprintf(buf, "ERD 2000 Unknown %X",rx_buf[9]);
+                        textsensor_dryerState->publish_state(buf);
+                }
+            }
+            
+            //0x2001:  E2 BB 0D 24 F0 01 20 01 01 00 D1 B8 E3  
+            if(rx_buf[7]==0x01)  {
+                ESP_LOGD(TAG, "erd x2001: %X", rx_buf[9]);
+                switch (rx_buf[9])  {
+                    case 0x00: 
+                        textsensor_dryerSubState->publish_state("N/A");
+                        break;
+                    case 0x09:
+                        textsensor_dryerSubState->publish_state("Tumble");
+                        break;                    
+                    case 0x0A: 
+                        textsensor_dryerSubState->publish_state("Load Detection");
+                        break;                    
+                    case 0x80: 
+                        textsensor_dryerSubState->publish_state("Drying");
+                        break;   
+                    case 0x81: 
+                        textsensor_dryerSubState->publish_state("Steam");
+                        break;   
+                    case 0x82: 
+                        textsensor_dryerSubState->publish_state("Cool Down");
+                        break;   
+                    case 0x83: 
+                        textsensor_dryerSubState->publish_state("Extended Tumble");
+                        break;   
+                    case 0x84: 
+                        textsensor_dryerSubState->publish_state("Damp");
+                        break;  
+                    case 0x85: 
+                        textsensor_dryerSubState->publish_state("Air Fluff");
+                        break;                           
+                    default:
+                        char buf[32];
+                        sprintf(buf, "ERD 2001 Unknown %X",rx_buf[9]);
+                        textsensor_dryerSubState->publish_state(buf);
+                }
+            }
+            
+            //0x2002:    E2 BB 0D 24 F0 01 20 02 01 00 88 E8 E3
+            if(rx_buf[7]==0x02)  {
+                ESP_LOGD(TAG, "erd x2002: %X", rx_buf[9]);
+                switch (rx_buf[9])  {
+                    case 0x00: //Damp
+                        textsensor_endOfCycle->publish_state("False");
+                        break;   
+                    case 0x01: //Damp
+                        textsensor_endOfCycle->publish_state("True");
+                        break;                           
+                    default:
+                        char buf[32];
+                        sprintf(buf, "ERD 2002 Unknown %X",rx_buf[9]);
+                        textsensor_endOfCycle->publish_state(buf);
+                }
+            }
+            
+            //DEBUG RX: <E2 BE 0E 24 F0 01 20 07 02 0B EA 72 3F E3 E1>
+            //INFO Parsed: <GEAFrame(src=0x24, dst=0xBE, payload=<F0 01 20 07 02 0B EA>, ack=True>
+            //INFO Parsed payload: <ERDCommand(command=<ERDCommandID.READ: 0xF0>, erds=[0x2007:<0B EA>])>
+            //TODO, this could be an escaped packet for the time which will have erroneous result.            
+            if(rx_buf[7]==0x07)  {
+                uint16_t seconds = (uint16_t)(rx_buf[9]) << 8 | (uint16_t)rx_buf[10];
+                float minutes = seconds / 60.0;
+                sensor_remainingtime->publish_state(minutes);
+            }
+            
+            //0x200A:  E2 BB 0D 24 F0 01 20 0A 01 06 41 8F E3
+            if(rx_buf[7]==0x0A)  {
                 switch (rx_buf[9])  {
                     case 0x89:
                         textsensor_dryerCycle->publish_state("Mixed Load");
@@ -164,14 +294,58 @@ class component_geUART :
                         
             }
         
-            //DEBUG RX: <E2 BE 0E 24 F0 01 20 07 02 0B EA 72 3F E3 E1>
-            //INFO Parsed: <GEAFrame(src=0x24, dst=0xBE, payload=<F0 01 20 07 02 0B EA>, ack=True>
-            //INFO Parsed payload: <ERDCommand(command=<ERDCommandID.READ: 0xF0>, erds=[0x2007:<0B EA>])>        
-            if(rx_buf[4]==0xF0 && rx_buf[6]==0x20 && rx_buf[7]==0x07)  {
-                uint16_t seconds = (uint16_t)(rx_buf[9]) << 8 | (uint16_t)rx_buf[10];
-                float minutes = seconds / 60.0;
-                sensor_remainingtime->publish_state(minutes);
+        
+            //0x204D:  E2 BB 0D 24 F0 01 20 4D 01 04 F9 F0 E3  
+            if(rx_buf[7]==0x4D)  {
+                ESP_LOGD(TAG, "erd x204D: %X", rx_buf[9]);
+                switch (rx_buf[9])  {
+                    case 0x00: 
+                        textsensor_DrynessSetting->publish_state("N/A");
+                        break;                       
+                    case 0x01: //Damp
+                        textsensor_DrynessSetting->publish_state("Damp");
+                        break;              
+                    case 0x02: //Less Dry
+                        textsensor_DrynessSetting->publish_state("Less Dry");
+                        break;                    
+                    case 0x03: //Dry
+                        textsensor_DrynessSetting->publish_state("Dry");
+                        break;
+                    case 0x04: //More Dry
+                        textsensor_DrynessSetting->publish_state("More Dry");
+                        break;                    
+                    default:
+                        char buf[32];
+                        sprintf(buf, "ERD 204D Unknown %X",rx_buf[9]);
+                        textsensor_DrynessSetting->publish_state(buf);
+                }
             }
+            
+            //0x2050:  E2 BB 0D 24 F0 01 20 50 01 05 E8 E0 E3 E3  
+            if(rx_buf[7]==0x50)  {
+                ESP_LOGD(TAG, "erd x2050: %X", rx_buf[9]);
+                switch (rx_buf[9])  {
+                    case 0x01: // Air Fluff
+                        textsensor_HeatSetting->publish_state("Air Fluff");
+                        break;
+                    case 0x03: // Low
+                        textsensor_HeatSetting->publish_state("Low");
+                        break;
+                    case 0x04: // Med 
+                        textsensor_HeatSetting->publish_state("Medium");                    
+                        break;
+                    case 0x05: // High
+                        textsensor_HeatSetting->publish_state("High");                    
+                        break;
+                    default:
+                        char buf[32];
+                        sprintf(buf, "ERD 2050 Unknown %X",rx_buf[9]);
+                        textsensor_HeatSetting->publish_state(buf);
+                }                
+            }
+        
+        
+
         }
         
 

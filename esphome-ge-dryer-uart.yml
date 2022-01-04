@@ -84,6 +84,7 @@ sensor:
       - name: ${upper_name} Time Remaining
         unit_of_measurement: min
         accuracy_decimals: 1
+        icon: mdi:progress-clock
 
 
 # Text sensors with general information.
@@ -97,14 +98,30 @@ text_sensor:
         auto c_ge_uart = ${init}
         return {
           c_ge_uart->textsensor_dryerState,
-          c_ge_uart->textsensor_dryerCycle
+          c_ge_uart->textsensor_dryerCycle,
+          c_ge_uart->textsensor_dryerSubState,
+          c_ge_uart->textsensor_endOfCycle,
+          c_ge_uart->textsensor_DrynessSetting,
+          c_ge_uart->textsensor_HeatSetting
           };
+          
+          
     text_sensors:
         - name: ${upper_name} State
+          icon: mdi:tumble-dryer
         - name: ${upper_name} Cycle
+          icon: mdi:tumble-dryer
+        - name: ${upper_name} SubState
+          icon: mdi:tumble-dryer
+        - name: ${upper_name} End of Cycle
+          icon: mdi:alarm-check
+        - name: ${upper_name} Dryness Setting
+          icon: mdi:water-circle
+        - name: ${upper_name} Heat Setting
+          icon: mdi:progress-clock
   
 
-#turn on blue led when connected to wifi
+#turn on blue led on at boot and back off when connected to wifi
 output:
   - platform: gpio
     pin: GPIO2
