@@ -11,6 +11,7 @@ Current Status:
 - `BE` is the address for the U+ connect.  Maybe `BF` above is internal wifi board?  Using `BB` for this ESPHome integration.
 - Test code is working for status items and remaining cycle time.  Dryer response packets are sent 3x because code doesn't send `e1` to acknowledge.
 
+![Untitled](https://user-images.githubusercontent.com/10102873/147993815-92dd5a8d-6161-4f82-92d9-c3f3c9e52dda.png)
 
 TODO:
 
