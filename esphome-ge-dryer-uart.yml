@@ -9,10 +9,11 @@ esphome:
   board: nodemcu-32s
   includes:
     - esphome-ge-dryer-uart.h
+    - esphome-ge-dryer-uart2.h
   
 # Enable logging via web interface only
 logger:
-  baud_rate: 115200
+  baud_rate: 0
 
 # Enable Home Assistant API
 api:
@@ -43,27 +44,42 @@ time:
     id: homeassistant_time
 
 uart:
-  id: uart_bus
-  tx_pin: 
-    number: GPIO17
-    inverted: true
-  rx_pin: 
-    number: GPIO16
-    inverted: true
-  baud_rate: 19200
-#hack to get USE_UART_DEBUGGER defined
-  debug:
-    direction: BOTH
-    after:
-        timeout: 50ms
-        delimiter: [0xE3]
-    sequence:
-      - lambda:  ;
-  
+  - id: uart_bus
+    tx_pin: 
+      number: GPIO17
+      inverted: true
+    rx_pin: 
+      number: GPIO16
+      inverted: true
+    baud_rate: 230400
+    debug:
+      direction: RX
+      after:
+          timeout: 50ms
+      sequence:
+        - lambda:  UARTDebug::log_hex(direction, bytes, ' ');
+  - id: uart_bus2
+    tx_pin: 
+      number: GPIO18
+      inverted: true
+    rx_pin: 
+      number: GPIO19
+      inverted: true
+    baud_rate: 230400
+    debug:
+      direction: RX
+      after:
+          timeout: 50ms
+      sequence:
+        - lambda:  UARTDebug::log_hex(direction, bytes, ':');
+        
 custom_component:
   - lambda: |-
       auto c_ge_uart = ${init}
       return {c_ge_uart};
+  - lambda: |-
+      auto c_ge_uart2 = component_geUART2::instance(id(uart_bus2));
+      return {c_ge_uart2};
 
 sensor:
   # Uptime sensor.

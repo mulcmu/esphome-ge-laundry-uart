@@ -61,59 +61,15 @@ class component_geUART :
 
         while ( available() ) {
             read_byte(&b);
-
-            //TODO find a better way to get final e3 and send e1 ack on time
-            if( (b == 0xe2) && (last_b==0xe1 || last_b==0xe3) )  {
-                uart::UARTDebug::log_hex(uart::UARTDirection::UART_DIRECTION_RX , rx_buf, ' ');
-                process_packet();                
-                rx_buf.clear();            
-            }
-            
-            last_b=b;
-            rx_buf.push_back(b);
-            
+           
             if(rx_buf.size() == rx_buf.capacity() )  {
-                ESP_LOGV(TAG, "rx_buf was filled!");
-                uart::UARTDebug::log_hex(uart::UARTDirection::UART_DIRECTION_RX , rx_buf, ':');
                 rx_buf.clear();            
             }
                 
         }
+        
+        write(0xFF);
        
-        if(millis() - millisProgress > 2000)  {
-
-            switch(erd) {
-            case 0:
-                write_array(erd2000);
-                erd=1;
-                break;
-             case 1:
-                write_array(erd2001);
-                erd=2;
-                break;
-            case 2:
-                write_array(erd2002);
-                erd=3;
-                break;
-            case 3:
-                write_array(erd2007);
-                erd=4;
-                break;
-            case 4:
-                write_array(erd200A);
-                erd=5;
-                break;
-            case 5:
-                write_array(erd204D);
-                erd=6;
-                break;
-            case 6:
-                write_array(erd2050);
-                erd=0;
-                break;    
-            }                
-            millisProgress = millis();
-        }
 
     }
 
