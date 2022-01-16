@@ -9,7 +9,6 @@ esphome:
   board: nodemcu-32s
   includes:
     - esphome-ge-dryer-uart.h
-    - esphome-ge-dryer-uart2.h
   
 # Enable logging via web interface only
 logger:
@@ -46,40 +45,24 @@ time:
 uart:
   - id: uart_bus
     tx_pin: 
-      number: GPIO17
-      inverted: true
+      number: GPIO18
+      inverted: false
     rx_pin: 
-      number: GPIO16
-      inverted: true
+      number: GPIO19
+      inverted: false
     baud_rate: 230400
     debug:
-      direction: RX
+      direction: BOTH
       after:
           timeout: 50ms
       sequence:
         - lambda:  UARTDebug::log_hex(direction, bytes, ' ');
-  - id: uart_bus2
-    tx_pin: 
-      number: GPIO18
-      inverted: true
-    rx_pin: 
-      number: GPIO19
-      inverted: true
-    baud_rate: 230400
-    debug:
-      direction: RX
-      after:
-          timeout: 50ms
-      sequence:
-        - lambda:  UARTDebug::log_hex(direction, bytes, ':');
         
 custom_component:
   - lambda: |-
       auto c_ge_uart = ${init}
       return {c_ge_uart};
-  - lambda: |-
-      auto c_ge_uart2 = component_geUART2::instance(id(uart_bus2));
-      return {c_ge_uart2};
+
 
 sensor:
   # Uptime sensor.
@@ -118,7 +101,11 @@ text_sensor:
           c_ge_uart->textsensor_dryerSubState,
           c_ge_uart->textsensor_endOfCycle,
           c_ge_uart->textsensor_DrynessSetting,
-          c_ge_uart->textsensor_HeatSetting
+          c_ge_uart->textsensor_HeatSetting,
+          c_ge_uart->textsensor_SoilSetting, 
+          c_ge_uart->textsensor_TempSetting, 
+          c_ge_uart->textsensor_SpinSetting, 
+          c_ge_uart->textsensor_RinseSetting
           };
           
           
@@ -135,7 +122,14 @@ text_sensor:
           icon: mdi:water-circle
         - name: ${upper_name} Heat Setting
           icon: mdi:progress-clock
-  
+        - name: ${upper_name} Soil Setting
+          icon: mdi:progress-clock
+        - name: ${upper_name} Temp Setting
+          icon: mdi:progress-clock
+        - name: ${upper_name} Spin Setting
+          icon: mdi:progress-clock
+        - name: ${upper_name} Rinse Setting
+          icon: mdi:progress-clock          
 
 #turn on blue led on at boot and back off when connected to wifi
 output:
