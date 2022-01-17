@@ -219,7 +219,7 @@ class component_geUART :
                     case 0x03: //Paused
                         textsensor_dryerState->publish_state("Paused");
                         break;                    
-                    case 0x04: //EOC<br/>
+                    case 0x04: //EOC
                         textsensor_dryerState->publish_state("Done");
                         break;                    
                     default:
@@ -229,6 +229,7 @@ class component_geUART :
                 }
             }
             
+                //TODO confirm washer substates
             //0x2001:  E2 BB 0D 24 F0 01 20 01 01 00 D1 B8 E3  
             if(rx_buf[7]==0x01)  {
                 ESP_LOGD(TAG, "erd x2001: %X", rx_buf[9]);
@@ -236,6 +237,30 @@ class component_geUART :
                     case 0x00: 
                         textsensor_dryerSubState->publish_state("N/A");
                         break;
+                    case 0x01: 
+                        textsensor_dryerSubState->publish_state("Fill");
+                        break;
+                    case 0x02:
+                        textsensor_dryerSubState->publish_state("Soak");
+                        break;                    
+                    case 0x03: 
+                        textsensor_dryerSubState->publish_state("Wash");
+                        break;                    
+                    case 0x04: 
+                        textsensor_dryerSubState->publish_state("Rinse");
+                        break;   
+                    case 0x05: 
+                        textsensor_dryerSubState->publish_state("Spin");
+                        break;   
+                    case 0x06: 
+                        textsensor_dryerSubState->publish_state("Drain");
+                        break;   
+                    case 0x07: 
+                        textsensor_dryerSubState->publish_state("Extra Spin");
+                        break;   
+                    case 0x08: 
+                        textsensor_dryerSubState->publish_state("Extra Rinse");
+                        break;                  
                     case 0x09:
                         textsensor_dryerSubState->publish_state("Tumble");
                         break;                    
@@ -271,10 +296,10 @@ class component_geUART :
             if(rx_buf[7]==0x02)  {
                 ESP_LOGD(TAG, "erd x2002: %X", rx_buf[9]);
                 switch (rx_buf[9])  {
-                    case 0x00: //Damp
+                    case 0x00: 
                         textsensor_endOfCycle->publish_state("False");
                         break;   
-                    case 0x01: //Damp
+                    case 0x01: 
                         textsensor_endOfCycle->publish_state("True");
                         break;                           
                     default:
@@ -333,6 +358,24 @@ class component_geUART :
                     case 0x83:
                         textsensor_dryerCycle->publish_state("Timed Dry");
                         break;
+                    case 0x14:
+                        textsensor_dryerCycle->publish_state("Colors");
+                        break;
+                    case 0x09:
+                        textsensor_dryerCycle->publish_state("Whites");
+                        break;
+                    case 0x82:
+                        textsensor_dryerCycle->publish_state("Active Wear");
+                        break;
+                    case 0x1D:
+                        textsensor_dryerCycle->publish_state("Quick Wash");
+                        break;
+                    case 0x02:
+                        textsensor_dryerCycle->publish_state("Drain & Spin");
+                        break;
+                    case 0x1A:
+                        textsensor_dryerCycle->publish_state("Deep Clean");
+                        break;                        
                     default:
                         char buf[32];
                         sprintf(buf, "ERD 200A Unknown %X",rx_buf[9]);
@@ -349,16 +392,16 @@ class component_geUART :
                     case 0x00: 
                         textsensor_DrynessSetting->publish_state("N/A");
                         break;                       
-                    case 0x01: //Damp
+                    case 0x01: 
                         textsensor_DrynessSetting->publish_state("Damp");
                         break;              
-                    case 0x02: //Less Dry
+                    case 0x02: 
                         textsensor_DrynessSetting->publish_state("Less Dry");
                         break;                    
-                    case 0x03: //Dry
+                    case 0x03: 
                         textsensor_DrynessSetting->publish_state("Dry");
                         break;
-                    case 0x04: //More Dry
+                    case 0x04: 
                         textsensor_DrynessSetting->publish_state("More Dry");
                         break;                    
                     default:
@@ -372,16 +415,16 @@ class component_geUART :
             if(rx_buf[7]==0x50)  {
                 ESP_LOGD(TAG, "erd x2050: %X", rx_buf[9]);
                 switch (rx_buf[9])  {
-                    case 0x01: // Air Fluff
+                    case 0x01: 
                         textsensor_HeatSetting->publish_state("Air Fluff");
                         break;
-                    case 0x03: // Low
+                    case 0x03: 
                         textsensor_HeatSetting->publish_state("Low");
                         break;
-                    case 0x04: // Med 
+                    case 0x04: 
                         textsensor_HeatSetting->publish_state("Medium");                    
                         break;
-                    case 0x05: // High
+                    case 0x05: 
                         textsensor_HeatSetting->publish_state("High");                    
                         break;
                     default:
@@ -395,7 +438,21 @@ class component_geUART :
             if(rx_buf[7]==0x15)  {
                 ESP_LOGD(TAG, "erd x2015: %X", rx_buf[9]);
                 switch (rx_buf[9])  {
-                 
+                    case 0x01: 
+                        textsensor_SoilSetting->publish_state("Light");
+                        break;
+                    case 0x02: 
+                        textsensor_SoilSetting->publish_state("Normal");
+                        break;
+                    case 0x03:  
+                        textsensor_SoilSetting->publish_state("Heavy");                    
+                        break;
+                    case 0x04: 
+                        textsensor_SoilSetting->publish_state("Extra Heavy");                    
+                        break;       
+                    case 0x05: //occurs for drain & spin cycle
+                        textsensor_SoilSetting->publish_state("N/A");                    
+                        break;                          
                     default:
                         char buf[32];
                         sprintf(buf, "ERD 2015 Unknown %X",rx_buf[9]);
@@ -407,7 +464,27 @@ class component_geUART :
             if(rx_buf[7]==0x16)  {
                 ESP_LOGD(TAG, "erd x2016: %X", rx_buf[9]);
                 switch (rx_buf[9])  {
-                   
+                    case 0x06:  //occurs for drain & spin cycle
+                        textsensor_TempSetting->publish_state("N/A");
+                        break;
+                    case 0x10:
+                        textsensor_TempSetting->publish_state("Tap Cold");
+                        break;
+                    case 0x11:
+                        textsensor_TempSetting->publish_state("Cold");
+                        break;
+                    case 0x12:
+                        textsensor_TempSetting->publish_state("Cool");
+                        break;
+                    case 0x13:
+                        textsensor_TempSetting->publish_state("Colors");
+                        break;
+                    case 0x14:
+                        textsensor_TempSetting->publish_state("Warm");
+                        break;
+                    case 0x15:
+                        textsensor_TempSetting->publish_state("Hot");
+                        break;  
                     default:
                         char buf[32];
                         sprintf(buf, "ERD 2016 Unknown %X",rx_buf[9]);
@@ -419,7 +496,18 @@ class component_geUART :
             if(rx_buf[7]==0x17)  {
                 ESP_LOGD(TAG, "erd x2017: %X", rx_buf[9]);
                 switch (rx_buf[9])  {
-                  
+                    case 0x00:
+                        textsensor_SpinSetting->publish_state("No Spin");
+                        break;
+                    case 0x02:
+                        textsensor_SpinSetting->publish_state("Normal");
+                        break;
+                    case 0x03:
+                        textsensor_SpinSetting->publish_state("More");
+                        break;
+                    case 0x04:
+                        textsensor_SpinSetting->publish_state("Max");
+                        break;                    
                     default:
                         char buf[32];
                         sprintf(buf, "ERD 2017 Unknown %X",rx_buf[9]);
@@ -427,11 +515,22 @@ class component_geUART :
                 }
             }
             
-            //0x2018:  washer rinse
+            //0x2018:  washer rinse, bit mapped, warm rinse didn't show up
             if(rx_buf[7]==0x18)  {
                 ESP_LOGD(TAG, "erd x2018: %X", rx_buf[9]);
                 switch (rx_buf[9])  {
-                  
+                    case 0x00:
+                        textsensor_RinseSetting->publish_state("Standard Rinse");
+                        break;
+                    case 0x01:
+                        textsensor_RinseSetting->publish_state("Deep Rinse");
+                        break;
+                    case 0x02:
+                        textsensor_RinseSetting->publish_state("Extra Rinse");
+                        break;
+                    case 0x03:
+                        textsensor_RinseSetting->publish_state("Deep + Extra Rinse");
+                        break;                   
                     default:
                         char buf[32];
                         sprintf(buf, "ERD 2018 Unknown %X",rx_buf[9]);
