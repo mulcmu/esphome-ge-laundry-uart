@@ -63,16 +63,16 @@
 | *0x2007*   | **Cycle Time Remaining**<br />U16 Dryer polls                |
 | *0x2008*   | *<br/>	1: labelFirstTank<br/>	2: labelSecondTank<br/>	3: statusFirstTank<br/>	4: statusSecondTank* |
 | *0x2009*   | *<br/>	1: isFirstTankEnable<br/>	2: isSecondTankEnable<br/>	3: labelFirstTank<br/>	4: labelSecondTank* |
-| *0x200A*   | *Cycle*<br />Dryer subscribed<br />0x89:Mixed Load   <br />0x0D:Delicates   <br />0x80:Cottons   <br />0x0B:Jeans   <br />0x8B:Casuals   <br />0x88:Quick Dry   <br />0x06:Towels   <br />0x04:Bulky   <br />0x05:Sanitize   <br />0x85:Air Fluff   <br />0x8C:Warm Up   <br />0x83:Timed Dry |
+| *0x200A*   | *Cycle*<br />Dryer subscribed<br />0x89:Mixed Load   <br />0x0D:Delicates   <br />0x80:Cottons   <br />0x0B:Jeans   <br />0x8B:Casuals   <br />0x88:Quick Dry   <br />0x06:Towels   <br />0x04:Bulky   <br />0x05:Sanitize   <br />0x85:Air Fluff   <br />0x8C:Warm Up   <br />0x83:Timed Dry<br />0x14:Colors<br />0x09:Whites<br />0x82: Active Wear<br />0x1D:Quick Wash<br />0x02: Drain & Spin<br />0x1A: Deep Clean |
 | **0x200E** | **Operating Mode**<br/>i.	0 = Consumer Mode<br/>ii.	1 = Service Mode<br/>iii.	2 = Native Mode<br/>iv.	3 = Continuous Cycle/Evaluation Mode<br/>v.	4 - Rapid Relay Mode<br/>vi.	5 = FCT Mode (EOL on M1 Laundry)<br/>vii.	6 = Model Plug Entry Mode<br/>viii.	7 = Demo Mode<br/>ix.	8 = Consumer Error Mode<br/>x.	9 = Floor Type Selection Mode |
 | **0x200F** | **Critical Response**                                        |
 | *0x2010*   | **Delay Time Remaining** (resolution minutes)<br />Dryer subscribed<br /> |
 | 0x2012     | Dryer Polls<br />1 at startup                                |
 | *0x2014*   | *IsEnable*                                                   |
-| *0x2015*   | *SoilLevel*                                                  |
-| *0x2016*   | *TempLevel*                                                  |
-| *0x2017*   | *SpinTimeLEvel*                                              |
-| *0x2018*   | *RinseOption*                                                |
+| *0x2015*   | *SoilLevel*<br />0x01 Light<br />0x02 Normal<br />0x03 Heavy<br />0x04 Ex Heavy |
+| *0x2016*   | *TempLevel*<br />0x10 Tap cold<br />0x11 Cold<br />0x12 Cool<br />0x13 Colors<br />0x14 Warm<br />0x15 Hot |
+| *0x2017*   | *SpinTimeLEvel*<br />0x00 No Spin<br />0x02 Normal<br />0x03 More<br />0x04 Max |
+| *0x2018*   | *RinseOption*<br />Appears bit mapped<br />bit 0: Deep Rinse On/Off<br />bit 1: Extra Rinse On/Off |
 | *0x2019*   | *Option*                                                     |
 | *0x201A*   | *DrynessLevel*                                               |
 | *0x201B*   | *IsExtendedTumble*                                           |
