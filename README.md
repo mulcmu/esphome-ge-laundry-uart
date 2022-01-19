@@ -3,16 +3,20 @@ Work in progress for integrating a GE washer & dryer with Home Assistant using E
 
 Current Status:
 
-- ESP32 interface circuit built on breadboard for testing.  My dryer uses half duplex serial connection (GEA1) and washer uses full duplex (GEA3).  Schematic for support hardware in the PCB folder.
+- ESP32 interface circuit built on breadboard and tested.  My dryer uses half duplex serial connection (GEA1) and washer uses full duplex (GEA3).  
 
-- Test code is working for W&D status items and remaining cycle time.  Dryer response packets are sent 3x because code doesn't send `e1` to acknowledge packets.
+- ESPHome code is working for W&D status items and remaining cycle time.  Dryer response packets are sent 3x because code doesn't send `e1` to acknowledge packets.
+
+- PCB design finished and order placed. 
   
 
 ![Untitled](https://user-images.githubusercontent.com/10102873/147993815-92dd5a8d-6161-4f82-92d9-c3f3c9e52dda.png)
 
+
 TODO:
 
-- Design PCB for the interface hardware.
+- Build and test PCB for the interface hardware.
+- Design enclosure
 - Test dryer sending acknowledge response to packets
 - Add #define to configure header for either washer or dryer.
 - Test with a GEA2 appliance.
