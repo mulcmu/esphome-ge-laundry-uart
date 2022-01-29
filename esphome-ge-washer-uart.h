@@ -177,8 +177,6 @@ class component_geUART :
         this->textsensor_dryerSubState = new TextSensor();
         this->textsensor_dryerCycle = new TextSensor();
         this->textsensor_endOfCycle = new TextSensor();
-        this->textsensor_DrynessSetting = new TextSensor();
-        this->textsensor_HeatSetting = new TextSensor();  
         this->textsensor_SoilSetting= new TextSensor();  
         this->textsensor_TempSetting= new TextSensor();  
         this->textsensor_SpinSetting= new TextSensor();  
