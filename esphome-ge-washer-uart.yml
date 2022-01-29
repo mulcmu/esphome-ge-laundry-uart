@@ -45,10 +45,10 @@ time:
 uart:
   - id: uart_bus
     tx_pin: 
-      number: GPIO18
+      number: GPIO17
       inverted: false
     rx_pin: 
-      number: GPIO19
+      number: GPIO16
       inverted: false
     baud_rate: 230400
     debug:
