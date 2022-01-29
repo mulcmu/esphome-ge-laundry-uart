@@ -5,8 +5,8 @@ Current Status:
 
 - ESP32 interface circuit built on custom PCB and tested.  My dryer uses half duplex serial connection (GEA1) and washer uses full duplex (GEA3).  
 
-- ESPHome code is working for W&D status items and remaining cycle time.  Dryer response packets are sent 3x because code doesn't send `e1` to acknowledge packets.
-
+- ESPHome code is working for W&D status items and remaining cycle time.  
+- 
 - PCB design R0.3 posted to fix some mistakes on R0.2. 
   
 
@@ -15,9 +15,8 @@ Current Status:
 
 TODO:
 
-- Build and test PCB Rev 0.3.
+- Build and test PCB Rev 0.3.  Add BOM
 - Post STL for enclosure
-- Test dryer sending acknowledge response to packets
 - Add #define or options of some sort to configure header for either washer or dryer.
 - Packets are currently hard coded with address for my appliances.  Make this configurable with correct checksums.
 - Change repository name to esphome-ge-laundry-uart
