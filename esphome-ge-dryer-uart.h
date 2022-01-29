@@ -54,6 +54,8 @@ class component_geUART :
         textsensor_HeatSetting->publish_state("Unknown");   
         
         sensor_remainingtime->publish_state(NAN);
+        
+        set_update_interval(10);
     }
 
     void update() override
@@ -63,12 +65,18 @@ class component_geUART :
             read_byte(&b);
 
             //TODO find a better way to get final e3 and send e1 ack on time
-            if( (b == 0xe2) && (last_b==0xe1 || last_b==0xe3) )  {
+            if( (b == 0xe3) && (last_b!=0xe0)  )  {
                 //uart::UARTDebug::log_hex(uart::UARTDirection::UART_DIRECTION_RX , rx_buf, ' ');
+                if (rx_buf[1]==0xBB)  {
+                    write(0xE1);
+                }
                 process_packet();                
-                rx_buf.clear();            
             }
             
+            if( (b == 0xe2) && (last_b!=0xe0)  )  {
+                rx_buf.clear();            
+            }
+
             last_b=b;
             rx_buf.push_back(b);
             
@@ -157,7 +165,7 @@ class component_geUART :
         if(rx_buf[4]!=0xF0 || rx_buf[6]!=0x20)
             return;
         
-        if(rx_buf.size() > 12)  {
+        if(rx_buf.size() > 10)  {
             //0x2000:  E2 BB 0D 24 F0 01 20 00 01 00 E6 88 E3
             if(rx_buf[7]==0x00)  {
                 ESP_LOGD(TAG, "erd x2000: %X", rx_buf[9]);
@@ -224,10 +232,10 @@ class component_geUART :
             if(rx_buf[7]==0x02)  {
                 ESP_LOGD(TAG, "erd x2002: %X", rx_buf[9]);
                 switch (rx_buf[9])  {
-                    case 0x00: //Damp
+                    case 0x00: 
                         textsensor_endOfCycle->publish_state("False");
                         break;   
-                    case 0x01: //Damp
+                    case 0x01: 
                         textsensor_endOfCycle->publish_state("True");
                         break;                           
                     default:
