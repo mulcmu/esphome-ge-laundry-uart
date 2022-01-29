@@ -31,9 +31,9 @@ wifi:
     subnet: 255.255.255.0
 
   # Enable fallback hotspot (captive portal) in case wifi connection fails
-  ap:
-    ssid: ${upper_name} Fallback Hotspot
-    password: !secret esp_home_captive_pw
+  #ap:
+  #  ssid: ${upper_name} Fallback Hotspot
+  #  password: !secret esp_home_captive_pw
 
 #captive_portal:
 
@@ -42,27 +42,45 @@ time:
   - platform: homeassistant
     id: homeassistant_time
 
+#Half Duplex Config
 uart:
-  - id: uart_bus
-    tx_pin: 
-      number: GPIO18
-      inverted: false
-    rx_pin: 
-      number: GPIO19
-      inverted: false
-    baud_rate: 230400
-    debug:
-      direction: BOTH
-      after:
-          timeout: 50ms
-      sequence:
-        - lambda:  UARTDebug::log_hex(direction, bytes, ' ');
-        
+  id: uart_bus
+  tx_pin: 
+    number: GPIO18
+    inverted: true
+  rx_pin: 
+    number: GPIO19
+    inverted: true
+  baud_rate: 19200
+  debug:
+    direction: BOTH
+    after:
+        timeout: 50ms
+    sequence:
+      - lambda:  UARTDebug::log_hex(direction, bytes, ' ');
+
+
+#Full Duplex GEA3 Config      
+#uart:
+#  - id: uart_bus
+#    tx_pin: 
+#      number: GPIO17
+#      inverted: false
+#    rx_pin: 
+#      number: GPIO16
+#      inverted: false
+#    baud_rate: 230400
+#    debug:
+#      direction: BOTH
+#      after:
+#          timeout: 50ms
+#      sequence:
+#        - lambda:  UARTDebug::log_hex(direction, bytes, ' ');
+#  
 custom_component:
   - lambda: |-
       auto c_ge_uart = ${init}
       return {c_ge_uart};
-
 
 sensor:
   # Uptime sensor.
@@ -101,11 +119,7 @@ text_sensor:
           c_ge_uart->textsensor_dryerSubState,
           c_ge_uart->textsensor_endOfCycle,
           c_ge_uart->textsensor_DrynessSetting,
-          c_ge_uart->textsensor_HeatSetting,
-          c_ge_uart->textsensor_SoilSetting, 
-          c_ge_uart->textsensor_TempSetting, 
-          c_ge_uart->textsensor_SpinSetting, 
-          c_ge_uart->textsensor_RinseSetting
+          c_ge_uart->textsensor_HeatSetting
           };
           
           
@@ -122,14 +136,7 @@ text_sensor:
           icon: mdi:water-circle
         - name: ${upper_name} Heat Setting
           icon: mdi:progress-clock
-        - name: ${upper_name} Soil Setting
-          icon: mdi:progress-clock
-        - name: ${upper_name} Temp Setting
-          icon: mdi:progress-clock
-        - name: ${upper_name} Spin Setting
-          icon: mdi:progress-clock
-        - name: ${upper_name} Rinse Setting
-          icon: mdi:progress-clock          
+  
 
 #turn on blue led on at boot and back off when connected to wifi
 output:
