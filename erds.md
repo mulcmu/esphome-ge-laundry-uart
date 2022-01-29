@@ -18,25 +18,25 @@
 | **0x0008** | **Appliance type**<br />Dryer polls at U+ startup            |
 | *0x0009*   | **sabbathMode**                                              |
 | *0x000A*   | *SoundLevel*                                                 |
-| 0x0035     | U+ Polls<br />[0x0035:<00 00 00 01>]                         |
+| 0x0035     | Dryer U+ Polls<br />[0x0035:<00 00 00 01>]                   |
 | 0x0037     | Subscribed ERD on Dryer U+                                   |
-| 0x0039     | U+ Polls<br />[0x0039:<01 00 03 00>]                         |
-| 0x003A     | U+ Polls<br />0x003A:<01 00 01 2C>]                          |
-| 0x003B     | U+ Polls<br />[0x003B:<01 2C 01 00>]                         |
+| 0x0039     | Dryer U+ Polls<br />[0x0039:<01 00 03 00>]                   |
+| 0x003A     | Dryer U+ Polls<br />0x003A:<01 00 01 2C>]                    |
+| 0x003B     | Dryer U+ Polls<br />[0x003B:<01 2C 01 00>]                   |
 | *0x0051*   |                                                              |
-| 0x0089     | U+ attempts to poll                                          |
-| 0x008F     | U+ Power on broadcast                                        |
-| 0x0090     | U+ Polls<br />0x0090:<E0 00 01 00>]                          |
-| 0x0094     | U+ Power on broadcast                                        |
-| 0x0095     | U+ Power on broadcast                                        |
-| 0x0096     | U+ Power on broadcast                                        |
-| 0x0097     | U+ Power on broadcast                                        |
-| 0x0099     | U+ Power on broadcast                                        |
+| 0x0089     | Dryer U+ attempts to poll                                    |
+| 0x008F     | Dryer U+ Power on broadcast                                  |
+| 0x0090     | Dryer U+ Polls<br />0x0090:<E0 00 01 00>]                    |
+| 0x0094     | Dryer U+ Power on broadcast                                  |
+| 0x0095     | Dryer U+ Power on broadcast                                  |
+| 0x0096     | Dryer U+ Power on broadcast                                  |
+| 0x0097     | Dryer U+ Power on broadcast                                  |
+| 0x0099     | Dryer U+ Power on broadcast                                  |
 | *0x0100*   |                                                              |
 | *0x0103*   |                                                              |
-| 0x0106     | U+ attempts to subscribe at boot<br />Attempts to poll later |
-| 0x107      | U+ attempts to subscribe at boot<br />Attempts to poll later |
-| 0x0108     | U+ Power on broadcast                                        |
+| 0x0106     | Dryer U+ attempts to subscribe at boot<br />Attempts to poll later |
+| 0x107      | Dryer U+ attempts to subscribe at boot<br />Attempts to poll later |
+| 0x0108     | Dryer U+ Power on broadcast                                  |
 | *0x510A*   |                                                              |
 
 ##### Advantium:
@@ -60,14 +60,14 @@
 | **0x2003** | **Cycle Count**<br />U16 returned indicating the number of cycles unit has run. |
 | **0x2004** | **Service Error Codes **                                     |
 | **0x2005** | **Demand Response Overrides Allowed**                        |
-| *0x2007*   | **Cycle Time Remaining**<br />U16 Dryer polls                |
+| *0x2007*   | **Cycle Time Remaining**<br />U16 Dryer polls<br />Washer polls |
 | *0x2008*   | *<br/>	1: labelFirstTank<br/>	2: labelSecondTank<br/>	3: statusFirstTank<br/>	4: statusSecondTank* |
 | *0x2009*   | *<br/>	1: isFirstTankEnable<br/>	2: isSecondTankEnable<br/>	3: labelFirstTank<br/>	4: labelSecondTank* |
 | *0x200A*   | *Cycle*<br />Dryer subscribed<br />0x89:Mixed Load   <br />0x0D:Delicates   <br />0x80:Cottons   <br />0x0B:Jeans   <br />0x8B:Casuals   <br />0x88:Quick Dry   <br />0x06:Towels   <br />0x04:Bulky   <br />0x05:Sanitize   <br />0x85:Air Fluff   <br />0x8C:Warm Up   <br />0x83:Timed Dry<br />0x14:Colors<br />0x09:Whites<br />0x82: Active Wear<br />0x1D:Quick Wash<br />0x02: Drain & Spin<br />0x1A: Deep Clean |
 | **0x200E** | **Operating Mode**<br/>i.	0 = Consumer Mode<br/>ii.	1 = Service Mode<br/>iii.	2 = Native Mode<br/>iv.	3 = Continuous Cycle/Evaluation Mode<br/>v.	4 - Rapid Relay Mode<br/>vi.	5 = FCT Mode (EOL on M1 Laundry)<br/>vii.	6 = Model Plug Entry Mode<br/>viii.	7 = Demo Mode<br/>ix.	8 = Consumer Error Mode<br/>x.	9 = Floor Type Selection Mode |
 | **0x200F** | **Critical Response**                                        |
 | *0x2010*   | **Delay Time Remaining** (resolution minutes)<br />Dryer subscribed<br /> |
-| 0x2012     | Dryer Polls<br />1 at startup                                |
+| 0x2012     | Dryer Polls<br />1 at startup<br />Washer Polls as well      |
 | *0x2014*   | *IsEnable*                                                   |
 | *0x2015*   | *SoilLevel*<br />0x01 Light<br />0x02 Normal<br />0x03 Heavy<br />0x04 Ex Heavy |
 | *0x2016*   | *TempLevel*<br />0x10 Tap cold<br />0x11 Cold<br />0x12 Cool<br />0x13 Colors<br />0x14 Warm<br />0x15 Hot |
