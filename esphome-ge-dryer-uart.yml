@@ -135,7 +135,7 @@ text_sensor:
         - name: ${upper_name} Dryness Setting
           icon: mdi:water-circle
         - name: ${upper_name} Heat Setting
-          icon: mdi:progress-clock
+          icon: mdi:thermometer
   
 
 #turn on blue led on at boot and back off when connected to wifi

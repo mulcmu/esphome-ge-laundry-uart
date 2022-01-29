@@ -1,14 +1,14 @@
 substitutions:
-  name: dryer
-  upper_name: Dryer
+  name: washer
+  upper_name: Washer
   init: 'component_geUART::instance(id(uart_bus));'
 
 esphome:
-  name: dryer
+  name: washer
   platform: esp32
   board: nodemcu-32s
   includes:
-    - esphome-ge-dryer-uart.h
+    - esphome-ge-washer-uart.h
   
 # Enable logging via web interface only
 logger:
@@ -26,7 +26,7 @@ wifi:
   
   # Optional manual IP
   manual_ip:
-    static_ip: 192.168.0.191
+    static_ip: 192.168.0.192
     gateway: 192.168.0.9
     subnet: 255.255.255.0
 
@@ -111,25 +111,21 @@ text_sensor:
           
     text_sensors:
         - name: ${upper_name} State
-          icon: mdi:tumble-dryer
+          icon: mdi:washing-machine
         - name: ${upper_name} Cycle
-          icon: mdi:tumble-dryer
+          icon: mdi:washing-machine
         - name: ${upper_name} SubState
-          icon: mdi:tumble-dryer
+          icon: mdi:washing-machine
         - name: ${upper_name} End of Cycle
           icon: mdi:alarm-check
-        - name: ${upper_name} Dryness Setting
-          icon: mdi:water-circle
-        - name: ${upper_name} Heat Setting
-          icon: mdi:progress-clock
         - name: ${upper_name} Soil Setting
-          icon: mdi:progress-clock
+          icon: mdi:liquid-spot
         - name: ${upper_name} Temp Setting
-          icon: mdi:progress-clock
+          icon: mdi:thermometer
         - name: ${upper_name} Spin Setting
-          icon: mdi:progress-clock
+          icon: mdi:autorenew
         - name: ${upper_name} Rinse Setting
-          icon: mdi:progress-clock          
+          icon: mdi:waves-arrow-up       
 
 #turn on blue led on at boot and back off when connected to wifi
 output:
