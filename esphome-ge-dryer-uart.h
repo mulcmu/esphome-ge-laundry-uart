@@ -64,7 +64,7 @@ class component_geUART :
 
             //TODO find a better way to get final e3 and send e1 ack on time
             if( (b == 0xe2) && (last_b==0xe1 || last_b==0xe3) )  {
-                uart::UARTDebug::log_hex(uart::UARTDirection::UART_DIRECTION_RX , rx_buf, ' ');
+                //uart::UARTDebug::log_hex(uart::UARTDirection::UART_DIRECTION_RX , rx_buf, ' ');
                 process_packet();                
                 rx_buf.clear();            
             }

@@ -12,7 +12,7 @@ esphome:
   
 # Enable logging via web interface only
 logger:
-  baud_rate: 115200
+  baud_rate: 0
 
 # Enable Home Assistant API
 api:
@@ -31,9 +31,9 @@ wifi:
     subnet: 255.255.255.0
 
   # Enable fallback hotspot (captive portal) in case wifi connection fails
-  ap:
-    ssid: ${upper_name} Fallback Hotspot
-    password: !secret esp_home_captive_pw
+  #ap:
+  #  ssid: ${upper_name} Fallback Hotspot
+  #  password: !secret esp_home_captive_pw
 
 #captive_portal:
 
@@ -42,24 +42,41 @@ time:
   - platform: homeassistant
     id: homeassistant_time
 
+#Half Duplex Config
 uart:
   id: uart_bus
   tx_pin: 
-    number: GPIO17
+    number: GPIO18
     inverted: true
   rx_pin: 
-    number: GPIO16
+    number: GPIO19
     inverted: true
   baud_rate: 19200
-#hack to get USE_UART_DEBUGGER defined
   debug:
     direction: BOTH
     after:
         timeout: 50ms
-        delimiter: [0xE3]
     sequence:
-      - lambda:  ;
-  
+      - lambda:  UARTDebug::log_hex(direction, bytes, ' ');
+
+
+#Full Duplex GEA3 Config      
+#uart:
+#  - id: uart_bus
+#    tx_pin: 
+#      number: GPIO17
+#      inverted: false
+#    rx_pin: 
+#      number: GPIO16
+#      inverted: false
+#    baud_rate: 230400
+#    debug:
+#      direction: BOTH
+#      after:
+#          timeout: 50ms
+#      sequence:
+#        - lambda:  UARTDebug::log_hex(direction, bytes, ' ');
+#  
 custom_component:
   - lambda: |-
       auto c_ge_uart = ${init}
