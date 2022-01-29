@@ -3,9 +3,7 @@
     "active_layer": 0,
     "active_layer_preset": "",
     "auto_track_width": true,
-    "hidden_nets": [
-      "GND"
-    ],
+    "hidden_nets": [],
     "high_contrast_mode": 0,
     "net_color_mode": 2,
     "opacity": {
@@ -64,7 +62,7 @@
       36
     ],
     "visible_layers": "fffffff_ffffffff",
-    "zone_display_mode": 1
+    "zone_display_mode": 0
   },
   "meta": {
     "filename": "OnionStraws.kicad_prl",
