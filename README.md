@@ -7,6 +7,7 @@ Current Status:
 
 - ESPHome code is working for W&D status items and remaining cycle time.  
 
+- 
 - PCB design R0.3 posted to fix some mistakes on R0.2. 
   
 
@@ -15,7 +16,7 @@ Current Status:
 
 TODO:
 
-- Build and test PCB Rev 0.3.
+- Build and test PCB Rev 0.3.  Add BOM
 - Post STL for enclosure
 - Add #define or options of some sort to configure header for either washer or dryer.
 - Packets are currently hard coded with address for my appliances.  Make this configurable with correct checksums.
