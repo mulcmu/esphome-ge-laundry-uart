@@ -18,7 +18,7 @@
 | **0x0008** | **Appliance type**<br />Dryer polls at U+ startup            |
 | *0x0009*   | **sabbathMode**                                              |
 | *0x000A*   | *SoundLevel*                                                 |
-| 0x0035     | Dryer U+ Polls<br />[0x0035:<00 00 00 01>]                   |
+| 0x0035     | Unit type<br />Dryer U+ Polls<br />[0x0035:<00 00 00 01>]    |
 | 0x0037     | Subscribed ERD on Dryer U+                                   |
 | 0x0039     | Dryer U+ Polls<br />[0x0039:<01 00 03 00>]                   |
 | 0x003A     | Dryer U+ Polls<br />0x003A:<01 00 01 2C>]                    |
@@ -67,7 +67,8 @@
 | **0x200E** | **Operating Mode**<br/>i.	0 = Consumer Mode<br/>ii.	1 = Service Mode<br/>iii.	2 = Native Mode<br/>iv.	3 = Continuous Cycle/Evaluation Mode<br/>v.	4 - Rapid Relay Mode<br/>vi.	5 = FCT Mode (EOL on M1 Laundry)<br/>vii.	6 = Model Plug Entry Mode<br/>viii.	7 = Demo Mode<br/>ix.	8 = Consumer Error Mode<br/>x.	9 = Floor Type Selection Mode |
 | **0x200F** | **Critical Response**                                        |
 | *0x2010*   | **Delay Time Remaining** (resolution minutes)<br />Dryer subscribed<br /> |
-| 0x2012     | Dryer Polls<br />1 at startup<br />Washer Polls as well      |
+| 0x2012     | Laundry door<br />Dryer Polls<br />1 at startup<br />Washer Polls as well<br />    OPEN = 0<br/>    CLOSED = 1<br/>    UNKNOWN = 255 |
+| 0x2013     | Washer Door Lock                                             |
 | *0x2014*   | *IsEnable*                                                   |
 | *0x2015*   | *SoilLevel*<br />0x01 Light<br />0x02 Normal<br />0x03 Heavy<br />0x04 Ex Heavy |
 | *0x2016*   | *TempLevel*<br />0x10 Tap cold<br />0x11 Cold<br />0x12 Cool<br />0x13 Colors<br />0x14 Warm<br />0x15 Hot |
