@@ -7,7 +7,6 @@ Current Status:
 
 - ESPHome code is working for W&D status items and remaining cycle time.  
 
-- 
 - PCB design R0.3 posted to fix some mistakes on R0.2. 
   
 

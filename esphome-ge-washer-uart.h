@@ -54,8 +54,8 @@ class component_geUART :
         textsensor_dryerCycle->publish_state("Unknown");
         textsensor_dryerSubState->publish_state("Unknown");
         textsensor_endOfCycle->publish_state("Unknown");
-        textsensor_DrynessSetting->publish_state("Unknown");
-        textsensor_HeatSetting->publish_state("Unknown");
+        //textsensor_DrynessSetting->publish_state("Unknown");
+        //textsensor_HeatSetting->publish_state("Unknown");
         textsensor_SoilSetting->publish_state("Unknown");
         textsensor_TempSetting->publish_state("Unknown");
         textsensor_SpinSetting->publish_state("Unknown");
