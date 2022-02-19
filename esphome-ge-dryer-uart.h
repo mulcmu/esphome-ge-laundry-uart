@@ -18,13 +18,20 @@ class component_geUART :
         public CustomAPIDevice {
 
   public:
-    Sensor *sensor_remainingtime;
-    TextSensor *textsensor_dryerState;
-    TextSensor *textsensor_dryerSubState;
-    TextSensor *textsensor_dryerCycle;
+    Sensor *sensor_remainingTime;
+    Sensor *sensor_cycleCount;    
+    TextSensor *textsensor_State;
+    TextSensor *textsensor_SubState;
+    TextSensor *textsensor_Cycle;
     TextSensor *textsensor_endOfCycle;
     TextSensor *textsensor_DrynessSetting;
-    TextSensor *textsensor_HeatSetting;   
+    TextSensor *textsensor_HeatSetting;
+    TextSensor *textsensor_SoilSetting;
+    TextSensor *textsensor_TempSetting;
+    TextSensor *textsensor_SpinSetting;
+    TextSensor *textsensor_RinseSetting;
+    TextSensor *textsensor_Door;
+    TextSensor *textsensor_DoorLock;      
 
     
     static component_geUART* instance(UARTComponent *parent)
@@ -46,14 +53,21 @@ class component_geUART :
         
         rx_buf.reserve(128);
         
-        textsensor_dryerState->publish_state("Unknown");
-        textsensor_dryerCycle->publish_state("Unknown");
-        textsensor_dryerSubState->publish_state("Unknown");
+        textsensor_State->publish_state("Unknown");
+        textsensor_Cycle->publish_state("Unknown");
+        textsensor_SubState->publish_state("Unknown");
         textsensor_endOfCycle->publish_state("Unknown");
         textsensor_DrynessSetting->publish_state("Unknown");
-        textsensor_HeatSetting->publish_state("Unknown");   
+        textsensor_HeatSetting->publish_state("Unknown");
+        textsensor_SoilSetting->publish_state("Unknown");
+        textsensor_TempSetting->publish_state("Unknown");
+        textsensor_SpinSetting->publish_state("Unknown");
+        textsensor_RinseSetting->publish_state("Unknown");   
+        textsensor_Door->publish_state("Unknown");
+        textsensor_DoorLock->publish_state("Unknown");        
         
-        sensor_remainingtime->publish_state(NAN);
+        sensor_remainingTime->publish_state(NAN);
+        sensor_cycleCount->publish_state(NAN);
         
         set_update_interval(10);
     }
@@ -64,7 +78,6 @@ class component_geUART :
         while ( available() ) {
             read_byte(&b);
 
-            //TODO find a better way to get final e3 and send e1 ack on time
             if( (b == 0xe3) && (last_b!=0xe0)  )  {
                 //uart::UARTDebug::log_hex(uart::UARTDirection::UART_DIRECTION_RX , rx_buf, ' ');
                 if (rx_buf[1]==0xBB)  {
@@ -88,40 +101,69 @@ class component_geUART :
                 
         }
        
-        if(millis() - millisProgress > 2000)  {
+        if(millis() - millisProgress > 200)  {
 
-           switch(erd) {
-           case 0:
-               write_array(erd2000);
-               erd=1;
-               break;
-            case 1:
-               write_array(erd2001);
-               erd=2;
-               break;
-           case 2:
-               write_array(erd2002);
-               erd=3;
-               break;
-           case 3:
-               write_array(erd2007);
-               erd=4;
-               break;
-           case 4:
-               write_array(erd200A);
-               erd=5;
-               break;
-           case 5:
-               write_array(erd204D);
-               erd=6;
-               break;
-           case 6:
-               write_array(erd2050);
-               erd=0;
-           break;    
-           }                
-           millisProgress = millis();
+            switch(erd) {
+            case 0:
+                write_array(erd2000);
+                erd=1;
+                break;
+             case 1:
+                write_array(erd2001);
+                erd=2;
+                break;
+            case 2:
+                write_array(erd2002);
+                erd=3;
+                break;
+            case 3:
+                //write_array(erd2003);
+                erd=4;
+                break;
+            case 4:
+                write_array(erd2007);
+                erd=5;
+                break;
+            case 5:
+                write_array(erd200A);
+                erd=6;
+                break;
+            case 6:
+                write_array(erd2012);
+                erd=7;
+                break; 
+            case 7:
+                //write_array(erd2013);
+                erd=8;
+                break;                
+            case 8:
+                //write_array(erd2015);
+                erd=9;
+                break; 
+            case 9:
+                //write_array(erd2016);
+                erd=10;
+                break; 
+            case 10:
+                //write_array(erd2017);
+                erd=11;
+                break; 
+            case 11:
+                //write_array(erd2018);
+                erd=12;
+                break; 
+            case 12:
+                write_array(erd204D);
+                erd=13;
+                break;
+            case 13:
+                write_array(erd2050);
+                erd=0;
+                break;    
+            }                
+            millisProgress = millis();
         }
+    
 
     }
 
@@ -133,29 +175,47 @@ class component_geUART :
     uint8_t erd=0;
     
     std::vector<uint8_t> rx_buf; 
-    std::vector<uint8_t> tx_buf;
     
-    //Hardcoded packets to read these ERDs
-    //U+ connect uses 0xBE, dryer sends to 0xBF
-    //use 0xBB
-    std::vector<uint8_t> erd2000= {0xe2, 0x24, 0xb, 0xbb, 0xf0, 0x1, 0x20, 0x00, 0x47, 0x1b, 0xe3};   //Dryer State
-    std::vector<uint8_t> erd2001= {0xe2, 0x24, 0xb, 0xbb, 0xf0, 0x1, 0x20, 0x01, 0x57, 0x3a, 0xe3};   //Sub state
-    std::vector<uint8_t> erd2002= {0xe2, 0x24, 0xb, 0xbb, 0xf0, 0x1, 0x20, 0x02, 0x67, 0x59, 0xe3};   //End of cycle
-    std::vector<uint8_t> erd2007= {0xe2, 0x24, 0xb, 0xbb, 0xf0, 0x1, 0x20, 0x07, 0x37, 0xfc, 0xe3};   //Cycle time remaining
-    std::vector<uint8_t> erd200A= {0xe2, 0x24, 0xb, 0xbb, 0xf0, 0x1, 0x20, 0x0a, 0xe6, 0x51, 0xe3};   //Cycle Setting
-    std::vector<uint8_t> erd204D= {0xe2, 0x24, 0xb, 0xbb, 0xf0, 0x1, 0x20, 0x4d, 0xde, 0x72, 0xe3};   //Dryness Setting
-    std::vector<uint8_t> erd2050= {0xe2, 0x24, 0xb, 0xbb, 0xf0, 0x1, 0x20, 0x50, 0x1d, 0xee, 0xe3};   //Heat Setting
+    //Hardcoded packets to read these ERDs, see crc.py
+    //U+ connect uses 0xBE, dryer sends to 0xBF (internal wifi module?)
+    //destination is 0x24 for dryer, use 0xBB as source
     
+    std::vector<uint8_t> fw_broadcast= {0XE2, 0XFF, 0X08, 0XBB, 0X01, 0X9A, 0X85, 0xE3};    //FW broadcast message
+    std::vector<uint8_t> erd2000= {0XE2, 0X24, 0X0B, 0XBB, 0XF0, 0X01, 0X20, 0X00, 0X47, 0X1B, 0xE3};    //State
+    std::vector<uint8_t> erd2001= {0XE2, 0X24, 0X0B, 0XBB, 0XF0, 0X01, 0X20, 0X01, 0X57, 0X3A, 0xE3};    //Sub State
+    std::vector<uint8_t> erd2002= {0XE2, 0X24, 0X0B, 0XBB, 0XF0, 0X01, 0X20, 0X02, 0X67, 0X59, 0xE3};    //End of Cycle
+    std::vector<uint8_t> erd2003= {0XE2, 0X24, 0X0B, 0XBB, 0XF0, 0X01, 0X20, 0X03, 0X77, 0X78, 0xE3};    //Cycle Count
+    std::vector<uint8_t> erd2007= {0XE2, 0X24, 0X0B, 0XBB, 0XF0, 0X01, 0X20, 0X07, 0X37, 0XFC, 0xE3};    //Cycle Time Remaining
+    std::vector<uint8_t> erd200A= {0XE2, 0X24, 0X0B, 0XBB, 0XF0, 0X01, 0X20, 0X0A, 0XE6, 0X51, 0xE3};    //Cycle Setting
+    std::vector<uint8_t> erd2012= {0XE2, 0X24, 0X0B, 0XBB, 0XF0, 0X01, 0X20, 0X12, 0X75, 0X68, 0xE3};    //Door State
+    std::vector<uint8_t> erd2013= {0XE2, 0X24, 0X0B, 0XBB, 0XF0, 0X01, 0X20, 0X13, 0X65, 0X49, 0xE3};    //Washer Door Lock
+    std::vector<uint8_t> erd2015= {0XE2, 0X24, 0X0B, 0XBB, 0XF0, 0X01, 0X20, 0X15, 0X05, 0X8F, 0xE3};    //Washer Soil Level
+    std::vector<uint8_t> erd2016= {0XE2, 0X24, 0X0B, 0XBB, 0XF0, 0X01, 0X20, 0X16, 0X35, 0XEC, 0xE3};    //Washer Temp Level
+    std::vector<uint8_t> erd2017= {0XE2, 0X24, 0X0B, 0XBB, 0XF0, 0X01, 0X20, 0X17, 0X25, 0XCD, 0xE3};    //Washer Spin Level
+    std::vector<uint8_t> erd2018= {0XE2, 0X24, 0X0B, 0XBB, 0XF0, 0X01, 0X20, 0X18, 0XD4, 0X22, 0xE3};    //Washer Rinse Option
+    std::vector<uint8_t> erd204D= {0XE2, 0X24, 0X0B, 0XBB, 0XF0, 0X01, 0X20, 0X4D, 0XDE, 0X72, 0xE3};    //Dryer Dryness Setting
+    std::vector<uint8_t> erd2050= {0XE2, 0X24, 0X0B, 0XBB, 0XF0, 0X01, 0X20, 0X50, 0X1D, 0XEE, 0xE3};    //Dryer Heat Setting
    
     component_geUART(UARTComponent *parent) : PollingComponent(200), UARTDevice(parent) 
     {
-        this->sensor_remainingtime = new Sensor();
-        this->textsensor_dryerState = new TextSensor();
-        this->textsensor_dryerSubState = new TextSensor();
-        this->textsensor_dryerCycle = new TextSensor();
+        this->sensor_remainingTime = new Sensor();
+        this->sensor_cycleCount = new Sensor();
+        
+        this->textsensor_State = new TextSensor();
+        this->textsensor_SubState = new TextSensor();
+        this->textsensor_Cycle = new TextSensor();
         this->textsensor_endOfCycle = new TextSensor();
+        
         this->textsensor_DrynessSetting = new TextSensor();
         this->textsensor_HeatSetting = new TextSensor();        
+                
+        this->textsensor_SoilSetting= new TextSensor();  
+        this->textsensor_TempSetting= new TextSensor();  
+        this->textsensor_SpinSetting= new TextSensor();  
+        this->textsensor_RinseSetting= new TextSensor();
+        
+        this->textsensor_Door= new TextSensor();  
+        this->textsensor_DoorLock= new TextSensor();         
     }
     
     void process_packet()  {
@@ -172,21 +232,21 @@ class component_geUART :
                 switch (rx_buf[9])  {
                     case 0x00: //Idle screen off
                     case 0x01: //Standby, display on
-                        textsensor_dryerState->publish_state("Off");
+                        textsensor_State->publish_state("Off");
                         break;
                     case 0x02: //Run
-                        textsensor_dryerState->publish_state("Running");
+                        textsensor_State->publish_state("Running");
                         break;                    
                     case 0x03: //Paused
-                        textsensor_dryerState->publish_state("Paused");
+                        textsensor_State->publish_state("Paused");
                         break;                    
-                    case 0x04: //EOC<br/>
-                        textsensor_dryerState->publish_state("Done");
+                    case 0x04: //EOC
+                        textsensor_State->publish_state("Done");
                         break;                    
                     default:
                         char buf[32];
                         sprintf(buf, "ERD 2000 Unknown %X",rx_buf[9]);
-                        textsensor_dryerState->publish_state(buf);
+                        textsensor_State->publish_state(buf);
                 }
             }
             
@@ -195,36 +255,60 @@ class component_geUART :
                 ESP_LOGD(TAG, "erd x2001: %X", rx_buf[9]);
                 switch (rx_buf[9])  {
                     case 0x00: 
-                        textsensor_dryerSubState->publish_state("N/A");
+                        textsensor_SubState->publish_state("N/A");
                         break;
+                    case 0x01: 
+                        textsensor_SubState->publish_state("Fill");
+                        break;
+                    case 0x02:
+                        textsensor_SubState->publish_state("Soak");
+                        break;                    
+                    case 0x03: 
+                        textsensor_SubState->publish_state("Wash");
+                        break;                    
+                    case 0x04: 
+                        textsensor_SubState->publish_state("Rinse");
+                        break;   
+                    case 0x05: 
+                        textsensor_SubState->publish_state("Spin");
+                        break;   
+                    case 0x06: 
+                        textsensor_SubState->publish_state("Drain");
+                        break;   
+                    case 0x07: 
+                        textsensor_SubState->publish_state("Extra Spin");
+                        break;   
+                    case 0x08: 
+                        textsensor_SubState->publish_state("Extra Rinse");
+                        break;                  
                     case 0x09:
-                        textsensor_dryerSubState->publish_state("Tumble");
+                        textsensor_SubState->publish_state("Tumble");
                         break;                    
                     case 0x0A: 
-                        textsensor_dryerSubState->publish_state("Load Detection");
+                        textsensor_SubState->publish_state("Load Detection");
                         break;                    
                     case 0x80: 
-                        textsensor_dryerSubState->publish_state("Drying");
+                        textsensor_SubState->publish_state("Drying");
                         break;   
                     case 0x81: 
-                        textsensor_dryerSubState->publish_state("Steam");
+                        textsensor_SubState->publish_state("Steam");
                         break;   
                     case 0x82: 
-                        textsensor_dryerSubState->publish_state("Cool Down");
+                        textsensor_SubState->publish_state("Cool Down");
                         break;   
                     case 0x83: 
-                        textsensor_dryerSubState->publish_state("Extended Tumble");
+                        textsensor_SubState->publish_state("Extended Tumble");
                         break;   
                     case 0x84: 
-                        textsensor_dryerSubState->publish_state("Damp");
+                        textsensor_SubState->publish_state("Damp");
                         break;  
                     case 0x85: 
-                        textsensor_dryerSubState->publish_state("Air Fluff");
+                        textsensor_SubState->publish_state("Air Fluff");
                         break;                           
                     default:
                         char buf[32];
                         sprintf(buf, "ERD 2001 Unknown %X",rx_buf[9]);
-                        textsensor_dryerSubState->publish_state(buf);
+                        textsensor_SubState->publish_state(buf);
                 }
             }
             
@@ -252,57 +336,218 @@ class component_geUART :
             if(rx_buf[7]==0x07)  {
                 uint16_t seconds = (uint16_t)(rx_buf[9]) << 8 | (uint16_t)rx_buf[10];
                 float minutes = seconds / 60.0;
-                sensor_remainingtime->publish_state(minutes);
+                sensor_remainingTime->publish_state(minutes);
             }
+            
+            if(rx_buf[7]==0x03)  {
+                uint16_t cycles = (uint16_t)(rx_buf[9]) << 8 | (uint16_t)rx_buf[10];
+                sensor_cycleCount->publish_state(cycles);
+            }            
+            
             
             //0x200A:  E2 BB 0D 24 F0 01 20 0A 01 06 41 8F E3
             if(rx_buf[7]==0x0A)  {
                 switch (rx_buf[9])  {
                     case 0x89:
-                        textsensor_dryerCycle->publish_state("Mixed Load");
+                        textsensor_Cycle->publish_state("Mixed Load");
                         break;
                     case 0x0D:
-                        textsensor_dryerCycle->publish_state("Delicates");
+                        textsensor_Cycle->publish_state("Delicates");
                         break;
                     case 0x80:
-                        textsensor_dryerCycle->publish_state("Cottons");
+                        textsensor_Cycle->publish_state("Cottons");
                         break;
                     case 0x0B:
-                        textsensor_dryerCycle->publish_state("Jeans");
+                        textsensor_Cycle->publish_state("Jeans");
                         break;
                     case 0x8B:
-                        textsensor_dryerCycle->publish_state("Casuals");
+                        textsensor_Cycle->publish_state("Casuals");
                         break;
                     case 0x88:
-                        textsensor_dryerCycle->publish_state("Quick Dry");
+                        textsensor_Cycle->publish_state("Quick Dry");
                         break;
                     case 0x06:
-                        textsensor_dryerCycle->publish_state("Towels");
+                        textsensor_Cycle->publish_state("Towels");
                         break;
                     case 0x04:
-                        textsensor_dryerCycle->publish_state("Bulky");
+                        textsensor_Cycle->publish_state("Bulky");
                         break;
                     case 0x05:
-                        textsensor_dryerCycle->publish_state("Sanitize");
+                        textsensor_Cycle->publish_state("Sanitize");
                         break;
                     case 0x85:
-                        textsensor_dryerCycle->publish_state("Air Fluff");
+                        textsensor_Cycle->publish_state("Air Fluff");
                         break;
                     case 0x8C:
-                        textsensor_dryerCycle->publish_state("Warm Up");
+                        textsensor_Cycle->publish_state("Warm Up");
                         break;
                     case 0x83:
-                        textsensor_dryerCycle->publish_state("Timed Dry");
+                        textsensor_Cycle->publish_state("Timed Dry");
                         break;
+                    case 0x14:
+                        textsensor_Cycle->publish_state("Colors");
+                        break;
+                    case 0x09:
+                        textsensor_Cycle->publish_state("Whites");
+                        break;
+                    case 0x82:
+                        textsensor_Cycle->publish_state("Active Wear");
+                        break;
+                    case 0x1D:
+                        textsensor_Cycle->publish_state("Quick Wash");
+                        break;
+                    case 0x02:
+                        textsensor_Cycle->publish_state("Drain & Spin");
+                        break;
+                    case 0x1A:
+                        textsensor_Cycle->publish_state("Deep Clean");
+                        break;                        
                     default:
                         char buf[32];
                         sprintf(buf, "ERD 200A Unknown %X",rx_buf[9]);
-                        textsensor_dryerCycle->publish_state(buf);
+                        textsensor_Cycle->publish_state(buf);
                 }
                         
             }
+            
+            //0x2012:  Door
+            if(rx_buf[7]==0x12)  {
+                ESP_LOGD(TAG, "erd x2012: %X", rx_buf[9]);
+                switch (rx_buf[9])  {
+                    case 0x00: 
+                        textsensor_Door->publish_state("Open");
+                        break;
+                    case 0x01: 
+                        textsensor_Door->publish_state("Closed");
+                        break;
+                    default:
+                        char buf[32];
+                        sprintf(buf, "ERD 2012 Unknown %X",rx_buf[9]);
+                        textsensor_Door->publish_state(buf);
+                }
+            }
+            
+            //0x2013:  Washer Door Lock
+            if(rx_buf[7]==0x13)  {
+                ESP_LOGD(TAG, "erd x2013: %X", rx_buf[9]);
+                switch (rx_buf[9])  {
+                    case 0x00: 
+                        textsensor_DoorLock->publish_state("Unlocked");
+                        break;
+                    case 0x01: 
+                        textsensor_DoorLock->publish_state("Locked");
+                        break;
+                    default:
+                        char buf[32];
+                        sprintf(buf, "ERD 2013 Unknown %X",rx_buf[9]);
+                        textsensor_DoorLock->publish_state(buf);
+                }
+            }            
         
-        
+            //0x2015:  washer soil
+            if(rx_buf[7]==0x15)  {
+                ESP_LOGD(TAG, "erd x2015: %X", rx_buf[9]);
+                switch (rx_buf[9])  {
+                    case 0x01: 
+                        textsensor_SoilSetting->publish_state("Light");
+                        break;
+                    case 0x02: 
+                        textsensor_SoilSetting->publish_state("Normal");
+                        break;
+                    case 0x03:  
+                        textsensor_SoilSetting->publish_state("Heavy");                    
+                        break;
+                    case 0x04: 
+                        textsensor_SoilSetting->publish_state("Extra Heavy");                    
+                        break;       
+                    case 0x05: //occurs for drain & spin cycle
+                        textsensor_SoilSetting->publish_state("N/A");                    
+                        break;                          
+                    default:
+                        char buf[32];
+                        sprintf(buf, "ERD 2015 Unknown %X",rx_buf[9]);
+                        textsensor_SoilSetting->publish_state(buf);
+                }
+            }
+            
+            //0x2016:  washer temp
+            if(rx_buf[7]==0x16)  {
+                ESP_LOGD(TAG, "erd x2016: %X", rx_buf[9]);
+                switch (rx_buf[9])  {
+                    case 0x06:  //occurs for drain & spin cycle
+                        textsensor_TempSetting->publish_state("N/A");
+                        break;
+                    case 0x10:
+                        textsensor_TempSetting->publish_state("Tap Cold");
+                        break;
+                    case 0x11:
+                        textsensor_TempSetting->publish_state("Cold");
+                        break;
+                    case 0x12:
+                        textsensor_TempSetting->publish_state("Cool");
+                        break;
+                    case 0x13:
+                        textsensor_TempSetting->publish_state("Colors");
+                        break;
+                    case 0x14:
+                        textsensor_TempSetting->publish_state("Warm");
+                        break;
+                    case 0x15:
+                        textsensor_TempSetting->publish_state("Hot");
+                        break;  
+                    default:
+                        char buf[32];
+                        sprintf(buf, "ERD 2016 Unknown %X",rx_buf[9]);
+                        textsensor_TempSetting->publish_state(buf);
+                }
+            }
+            
+            //0x2017: washer spin
+            if(rx_buf[7]==0x17)  {
+                ESP_LOGD(TAG, "erd x2017: %X", rx_buf[9]);
+                switch (rx_buf[9])  {
+                    case 0x00:
+                        textsensor_SpinSetting->publish_state("No Spin");
+                        break;
+                    case 0x02:
+                        textsensor_SpinSetting->publish_state("Normal");
+                        break;
+                    case 0x03:
+                        textsensor_SpinSetting->publish_state("More");
+                        break;
+                    case 0x04:
+                        textsensor_SpinSetting->publish_state("Max");
+                        break;                    
+                    default:
+                        char buf[32];
+                        sprintf(buf, "ERD 2017 Unknown %X",rx_buf[9]);
+                        textsensor_SpinSetting->publish_state(buf);
+                }
+            }
+            
+            //0x2018:  washer rinse, bit mapped, warm rinse didn't show up
+            if(rx_buf[7]==0x18)  {
+                ESP_LOGD(TAG, "erd x2018: %X", rx_buf[9]);
+                switch (rx_buf[9])  {
+                    case 0x00:
+                        textsensor_RinseSetting->publish_state("Standard Rinse");
+                        break;
+                    case 0x01:
+                        textsensor_RinseSetting->publish_state("Deep Rinse");
+                        break;
+                    case 0x02:
+                        textsensor_RinseSetting->publish_state("Extra Rinse");
+                        break;
+                    case 0x03:
+                        textsensor_RinseSetting->publish_state("Deep + Extra Rinse");
+                        break;                   
+                    default:
+                        char buf[32];
+                        sprintf(buf, "ERD 2018 Unknown %X",rx_buf[9]);
+                        textsensor_RinseSetting->publish_state(buf);
+                }
+            }
+                        
             //0x204D:  E2 BB 0D 24 F0 01 20 4D 01 04 F9 F0 E3  
             if(rx_buf[7]==0x4D)  {
                 ESP_LOGD(TAG, "erd x204D: %X", rx_buf[9]);
@@ -310,16 +555,16 @@ class component_geUART :
                     case 0x00: 
                         textsensor_DrynessSetting->publish_state("N/A");
                         break;                       
-                    case 0x01: //Damp
+                    case 0x01: 
                         textsensor_DrynessSetting->publish_state("Damp");
                         break;              
-                    case 0x02: //Less Dry
+                    case 0x02: 
                         textsensor_DrynessSetting->publish_state("Less Dry");
                         break;                    
-                    case 0x03: //Dry
+                    case 0x03: 
                         textsensor_DrynessSetting->publish_state("Dry");
                         break;
-                    case 0x04: //More Dry
+                    case 0x04: 
                         textsensor_DrynessSetting->publish_state("More Dry");
                         break;                    
                     default:
@@ -333,16 +578,16 @@ class component_geUART :
             if(rx_buf[7]==0x50)  {
                 ESP_LOGD(TAG, "erd x2050: %X", rx_buf[9]);
                 switch (rx_buf[9])  {
-                    case 0x01: // Air Fluff
+                    case 0x01: 
                         textsensor_HeatSetting->publish_state("Air Fluff");
                         break;
-                    case 0x03: // Low
+                    case 0x03: 
                         textsensor_HeatSetting->publish_state("Low");
                         break;
-                    case 0x04: // Med 
+                    case 0x04: 
                         textsensor_HeatSetting->publish_state("Medium");                    
                         break;
-                    case 0x05: // High
+                    case 0x05: 
                         textsensor_HeatSetting->publish_state("High");                    
                         break;
                     default:
@@ -351,15 +596,8 @@ class component_geUART :
                         textsensor_HeatSetting->publish_state(buf);
                 }                
             }
-        
-        
-
+            
         }
-        
-
-        
-        
-    }
-
+     }
 };
     

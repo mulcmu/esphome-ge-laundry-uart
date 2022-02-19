@@ -12,7 +12,7 @@ esphome:
   
 # Enable logging via web interface only
 logger:
-  baud_rate: 0
+  baud_rate: 115200
 
 # Enable Home Assistant API
 api:
@@ -95,13 +95,17 @@ sensor:
     lambda: |-
       auto c_ge_uart = ${init}
       return {
-        c_ge_uart->sensor_remainingtime
+        c_ge_uart->sensor_remainingTime,
+        c_ge_uart->sensor_cycleCount
       };
     sensors:
       - name: ${upper_name} Time Remaining
         unit_of_measurement: min
         accuracy_decimals: 1
         icon: mdi:progress-clock
+      - name: ${upper_name} Cycle Count
+        accuracy_decimals: 0
+        icon: mdi:progress-clock        
 
 
 # Text sensors with general information.
@@ -114,12 +118,13 @@ text_sensor:
     lambda: |-
         auto c_ge_uart = ${init}
         return {
-          c_ge_uart->textsensor_dryerState,
-          c_ge_uart->textsensor_dryerCycle,
-          c_ge_uart->textsensor_dryerSubState,
+          c_ge_uart->textsensor_State,
+          c_ge_uart->textsensor_Cycle,
+          c_ge_uart->textsensor_SubState,
           c_ge_uart->textsensor_endOfCycle,
           c_ge_uart->textsensor_DrynessSetting,
-          c_ge_uart->textsensor_HeatSetting
+          c_ge_uart->textsensor_HeatSetting,
+          c_ge_uart->textsensor_Door
           };
           
           
@@ -136,6 +141,8 @@ text_sensor:
           icon: mdi:water-circle
         - name: ${upper_name} Heat Setting
           icon: mdi:thermometer
+        - name: ${upper_name} Door
+          icon: mdi:door          
   
 
 #turn on blue led on at boot and back off when connected to wifi
