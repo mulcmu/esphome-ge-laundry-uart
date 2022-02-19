@@ -1,6 +1,6 @@
 ### Rev 0.3
 
-Gerbers uploaded, ready to order.  Added test points, LED, Push button and two more protection diodes.
+Added test points, LED, Push button and two more protection diodes.  1st board built and tested with dryer.
 
 ![OnionStraws](https://user-images.githubusercontent.com/10102873/151646053-841ecb00-9c4c-4cec-b6ba-a1de453bc428.png)
 
