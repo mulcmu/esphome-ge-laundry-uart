@@ -57,7 +57,7 @@
 | *0x2000*   | *StateDetail*<br />Dryer subscribed<br />**i.	0 = Idle<br/>ii.	1 = Standby<br/>iii.	2 = Run<br/>iv.	3 = Pause<br/>v.	4 = EOC<br/>vi.	5 = DSMDelayRun<br/>vii.	6 = DelayRun<br/>viii.	7 = DelayPause<br/>ix.	8 = DrainTimeout<br/>x.	9 to 127 =  Not used<br/>xi.	128 = Clean Speak** |
 | *0x2001*   | *SubCycle*<br />Dryer subscribed<br />**i.	0 = Not applicable<br/>ii.	1 = Fill (washer only)<br/>iii.	2 = Soak(washer only)<br/>iv.	3 = Wash (washer only)<br/>v.	4 = Rinse(washer only)<br/>vi.	5 = Spin(washer only)<br/>vii.	6 = Drain(washer only)<br/>viii.	7 = Extra Spin(washer only)<br/>ix.	8 = Extra Rinse(washer only)<br/>x.	9 = Tumble (Dryer only)<br/>xi.	10 = Load Size Detection (washer or dryer)<br/>xii.	11 to 127 = Not used<br/>xiii.	128 =  Drying (dryer)<br/>xiv.	129 =  Mist Steam (dryer)<br/>xv.	130 = Cool Down (dryer)<br/>xvi.	131 = Extended Tumble (dryer)<br/>xvii.	132 = Damp (dryer)<br/>xviii.	133 = Airfluff (dryer)** |
 | 0x2002     | **End of Cycle**<br />Dryer subscribed                       |
-| **0x2003** | **Cycle Count**<br />U16 returned indicating the number of cycles unit has run.<br />doesn't return anything on washer |
+| **0x2003** | **Cycle Count**<br />U16 returned indicating the number of cycles unit has run.<br />doesn't return anything on washer or dryer |
 | **0x2004** | **Service Error Codes **                                     |
 | **0x2005** | **Demand Response Overrides Allowed**                        |
 | *0x2007*   | **Cycle Time Remaining**<br />U16 Dryer polls<br />Washer polls |

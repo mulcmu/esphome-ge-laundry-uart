@@ -7,7 +7,7 @@ Current Status:
 
 - ESPHome code is working for W&D status items and remaining cycle time.  
 
-- PCB design R0.3 posted to fix some mistakes on R0.2. 
+- Built one PCB  R0.3 and tested the GEA1. 
   
 
 ![Untitled](https://user-images.githubusercontent.com/10102873/147993815-92dd5a8d-6161-4f82-92d9-c3f3c9e52dda.png)
@@ -15,12 +15,18 @@ Current Status:
 
 TODO:
 
-- Build and test PCB Rev 0.3.  Add BOM
-- Post STL for enclosure
+- Build more PCB R0.3.  Test GEA3.  Add BOM.
+- Add ESPHome function for LED and button added in R0.3.
+- Post STL for enclosure.  Update Lid for LED & button holes
 - Add #define or options of some sort to configure header for either washer or dryer.
+- Add missing cycle types / settings from simbaja/gehome
+- Add a "setup" yaml & .h.  Broadcast message to see what endpoints respond and check to make sure necessary erds are present. 
+- Add build/installation/configuration instructions
 - Packets are currently hard coded with address for my appliances.  Make this configurable with correct checksums.
 - Change repository name to esphome-ge-laundry-uart
 - Test with a GEA2 appliance.
+- Test on appliance with integrated wifi.  Will extra bus traffic / processor load cause problems. 
+- Add accelerometer to PCB.  Monitor appliance health by looking for changes in vibrations over time.
 
 Related projects:
 

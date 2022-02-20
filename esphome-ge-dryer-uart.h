@@ -32,7 +32,6 @@ class component_geUART :
     TextSensor *textsensor_RinseSetting;
     TextSensor *textsensor_Door;
     TextSensor *textsensor_DoorLock;      
-
     
     static component_geUART* instance(UARTComponent *parent)
     {
@@ -163,9 +162,7 @@ class component_geUART :
             }                
             millisProgress = millis();
         }
-    
-
-    }
+     }
 
         
   private: 
@@ -179,6 +176,7 @@ class component_geUART :
     //Hardcoded packets to read these ERDs, see crc.py
     //U+ connect uses 0xBE, dryer sends to 0xBF (internal wifi module?)
     //destination is 0x24 for dryer, use 0xBB as source
+    //any occurrences of 0XE0, 0XE1, 0XE2 and 0XE3 in the data need escaped with 0XE0
     
     std::vector<uint8_t> fw_broadcast= {0XE2, 0XFF, 0X08, 0XBB, 0X01, 0X9A, 0X85, 0xE3};    //FW broadcast message
     std::vector<uint8_t> erd2000= {0XE2, 0X24, 0X0B, 0XBB, 0XF0, 0X01, 0X20, 0X00, 0X47, 0X1B, 0xE3};    //State
@@ -218,6 +216,19 @@ class component_geUART :
         this->textsensor_DoorLock= new TextSensor();         
     }
     
+    uint16_t crc16geabus_bit(uint16_t crc, void const *mem, size_t len) {
+        unsigned char const *data = mem;
+        if (data == NULL)
+            return 0xe300;
+        for (size_t i = 0; i < len; i++) {
+            crc ^= (uint16_t)data[i] << 8;
+            for (unsigned k = 0; k < 8; k++) {
+                crc = crc & 0x8000 ? (crc << 1) ^ 0x1021 : crc << 1;
+            }
+        }
+        return crc;
+    }
+        
     void process_packet()  {
         if(rx_buf[1]!=0xBB)
             return;
@@ -332,7 +343,10 @@ class component_geUART :
             //DEBUG RX: <E2 BE 0E 24 F0 01 20 07 02 0B EA 72 3F E3 E1>
             //INFO Parsed: <GEAFrame(src=0x24, dst=0xBE, payload=<F0 01 20 07 02 0B EA>, ack=True>
             //INFO Parsed payload: <ERDCommand(command=<ERDCommandID.READ: 0xF0>, erds=[0x2007:<0B EA>])>
-            //TODO, this could be an escaped packet for the time which will have erroneous result.            
+            
+            //Nothing in the packet would be escaped 0xe0 until [9] but this would be 15 hours
+            //of remaining time which is implausible.  If [10] is escape character error is at most
+            //3 seconds so ignore potential problem.
             if(rx_buf[7]==0x07)  {
                 uint16_t seconds = (uint16_t)(rx_buf[9]) << 8 | (uint16_t)rx_buf[10];
                 float minutes = seconds / 60.0;
