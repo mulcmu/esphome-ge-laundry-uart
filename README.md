@@ -1,4 +1,4 @@
-# esphome-ge-dryer-uart
+# esphome-ge-laundry-uart
 Work in progress for integrating a GE washer & dryer with Home Assistant using ESPHome.  The GE W&D have an RJ45 style communication port with a serial interface.  Goal is to have ESP32 hardware powered by the communication port and provide remaining time and cycle done feedback to HA.
 
 Current Status:
@@ -23,7 +23,6 @@ TODO:
 - Add a "setup" yaml & .h.  Broadcast message to see what endpoints respond and check to make sure necessary erds are present. 
 - Add build/installation/configuration instructions
 - Packets are currently hard coded with address for my appliances.  Make this configurable with correct checksums.
-- Change repository name to esphome-ge-laundry-uart
 - Test with a GEA2 appliance.
 - Test on appliance with integrated wifi.  Will extra bus traffic / processor load cause problems. 
 - Add accelerometer to PCB.  Monitor appliance health by looking for changes in vibrations over time.
