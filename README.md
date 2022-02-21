@@ -15,7 +15,7 @@ Current Status:
 
 TODO:
 
-- Build more PCB R0.3.  Test GEA3.  Add BOM.
+- Build more PCB R0.3.  Test GEA3.
 - Add ESPHome function for LED and button added in R0.3.
 - Post STL for enclosure.  Update Lid for LED & button holes
 - Add #define or options of some sort to configure header for either washer or dryer.
