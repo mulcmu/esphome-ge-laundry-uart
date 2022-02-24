@@ -145,13 +145,37 @@ text_sensor:
           icon: mdi:door          
   
 
-#turn on blue led on at boot and back off when connected to wifi
+# Example configuration entry
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO14
+      mode:
+        input: true
+        pullup: true
+      inverted: True        
+    id: push_button
+    filters:
+      - delayed_off: 10ms
+      - delayed_on: 10ms   
+    on_press:
+      then:
+        - output.turn_on: green_led      
+    on_release:
+      then:
+        - output.turn_off: green_led 
+        
 output:
   - platform: gpio
     pin: GPIO2
     id: onboard_led
     inverted: True
+  - platform: gpio
+    pin: GPIO13
+    id: green_led
+    inverted: false    
 
+#turn on blue led on at boot and back off when connected to wifi
 interval:
   - interval: 1s
     then:
