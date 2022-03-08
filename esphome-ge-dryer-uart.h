@@ -77,19 +77,25 @@ class component_geUART :
         while ( available() ) {
             read_byte(&b);
 
-            if( (b == 0xe3) && (last_b!=0xe0)  )  {
-                //uart::UARTDebug::log_hex(uart::UARTDirection::UART_DIRECTION_RX , rx_buf, ' ');
-                if (rx_buf[1]==0xBB)  {
-                    write(0xE1);
+            if (b == 0xE0) 
+                //read escaped data byte
+                read_byte(&b);
+            else  {
+                //process start end bytes
+                if (b == 0xE3)  {
+                    if (rx_buf[1]==0xBB)  {
+                        write(0xE1);
+                        yield();
+                        process_packet(); 
+                    } 
                 }
-                process_packet();                
+                if(b == 0xE2)   {
+                    rx_buf.clear();            
+                }
             }
-            
-            if( (b == 0xe2) && (last_b!=0xe0)  )  {
-                rx_buf.clear();            
-            }
-
-            last_b=b;
+ 
+                //uart::UARTDebug::log_hex(uart::UARTDirection::UART_DIRECTION_RX , rx_buf, ' ');
+               
             rx_buf.push_back(b);
             
             if(rx_buf.size() == rx_buf.capacity() )  {
@@ -101,7 +107,9 @@ class component_geUART :
         }
        
         if(millis() - millisProgress > 200)  {
-
+            if( available() )
+                return;
+            
             switch(erd) {
             case 0:
                 write_array(erd2000);
@@ -167,7 +175,6 @@ class component_geUART :
         
   private: 
     uint8_t b=0;
-    uint8_t last_b=0;
     unsigned long millisProgress=0;
     uint8_t erd=0;
     
@@ -216,7 +223,7 @@ class component_geUART :
         this->textsensor_DoorLock= new TextSensor();         
     }
     
-    uint16_t crc16geabus_bit(uint16_t crc, void const *mem, size_t len) {
+    uint16_t crc16geabus_bit(uint16_t crc, unsigned char const *mem, size_t len) {
         unsigned char const *data = mem;
         if (data == NULL)
             return 0xe300;
@@ -230,7 +237,23 @@ class component_geUART :
     }
         
     void process_packet()  {
-        if(rx_buf[1]!=0xBB)
+        if(rx_buf.size() < 6)
+             return;
+        
+        //if(rx_buf[1]!=0xBB)
+        //    return;        
+        
+       //Strip the escape bytes 0xE0
+       // for (std::vector<uint8_t>::iterator it = rx_buf.begin(); it != rx_buf.end(); ) {
+       //     if (*it == 0xE0) 
+       //         it = rx_buf.erase(it);  //erases 0XE0 and returns the byte being escaped
+       //     ++it;
+       // }
+        
+        uart::UARTDebug::log_hex(uart::UARTDirection::UART_DIRECTION_RX , rx_buf, '-');
+        
+        //if packet length is invalid then collision was likely
+        if(rx_buf.size() != rx_buf[2]-1)  //process_packet() gets called before E3 is pushed
             return;
         
         if(rx_buf[4]!=0xF0 || rx_buf[6]!=0x20)
@@ -343,10 +366,7 @@ class component_geUART :
             //DEBUG RX: <E2 BE 0E 24 F0 01 20 07 02 0B EA 72 3F E3 E1>
             //INFO Parsed: <GEAFrame(src=0x24, dst=0xBE, payload=<F0 01 20 07 02 0B EA>, ack=True>
             //INFO Parsed payload: <ERDCommand(command=<ERDCommandID.READ: 0xF0>, erds=[0x2007:<0B EA>])>
-            
-            //Nothing in the packet would be escaped 0xe0 until [9] but this would be 15 hours
-            //of remaining time which is implausible.  If [10] is escape character error is at most
-            //3 seconds so ignore potential problem.
+ 
             if(rx_buf[7]==0x07)  {
                 uint16_t seconds = (uint16_t)(rx_buf[9]) << 8 | (uint16_t)rx_buf[10];
                 float minutes = seconds / 60.0;

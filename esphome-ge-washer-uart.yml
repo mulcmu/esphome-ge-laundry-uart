@@ -150,3 +150,8 @@ interval:
           - output.turn_on: onboard_led
         else:
           - output.turn_off: onboard_led
+
+button:
+  #HA button to restart.
+  - platform: restart
+    name: ${upper_name} Restart

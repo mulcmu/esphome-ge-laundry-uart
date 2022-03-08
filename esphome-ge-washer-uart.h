@@ -68,7 +68,7 @@ class component_geUART :
         sensor_remainingTime->publish_state(NAN);
         sensor_cycleCount->publish_state(NAN);
         
-        set_update_interval(10);
+        set_update_interval(5);
     }
 
     void update() override

@@ -12,7 +12,7 @@ esphome:
   
 # Enable logging via web interface only
 logger:
-  baud_rate: 115200
+  baud_rate: 0  #115200
 
 # Enable Home Assistant API
 api:
@@ -53,7 +53,7 @@ uart:
     inverted: true
   baud_rate: 19200
   debug:
-    direction: BOTH
+    direction: TX
     after:
         timeout: 50ms
     sequence:
@@ -146,24 +146,24 @@ text_sensor:
   
 
 # Example configuration entry
-binary_sensor:
-  - platform: gpio
-    pin:
-      number: GPIO14
-      mode:
-        input: true
-        pullup: true
-      inverted: True        
-    id: push_button
-    filters:
-      - delayed_off: 10ms
-      - delayed_on: 10ms   
-    on_press:
-      then:
-        - output.turn_on: green_led      
-    on_release:
-      then:
-        - output.turn_off: green_led 
+#binary_sensor:
+#  - platform: gpio
+#    pin:
+#      number: GPIO14
+#      mode:
+#        input: true
+#        pullup: true
+#      inverted: True        
+#    id: push_button
+#    filters:
+#      - delayed_off: 10ms
+#      - delayed_on: 10ms   
+#    on_press:
+#      then:
+#        - output.turn_on: green_led      
+#    on_release:
+#      then:
+#        - output.turn_off: green_led 
         
 output:
   - platform: gpio
@@ -183,6 +183,11 @@ interval:
         condition:
           wifi.connected:
         then:
-          - output.turn_on: onboard_led
+          - output.turn_on: green_led
         else:
-          - output.turn_off: onboard_led
+          - output.turn_off: green_led
+          
+button:
+  #HA button to restart.
+  - platform: restart
+    name: ${upper_name} Restart
