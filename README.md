@@ -19,7 +19,7 @@ TODO:
 - Add a "setup" yaml & .h.  Broadcast message to see what endpoints respond and check to make sure necessary erds are present. 
 - Add build/installation/configuration instructions
 - Packets are currently hard coded with address for my appliances.  Make this configurable with correct checksums.
-- Test with a GEA2 appliance.  If GEA2 is inverted TTL, the pull up resistors are likely wrong.
+- Test with a GEA2 appliance.  If GEA2 is inverted TTL, the pull up resistors are likely wrong.  Rev 1.0 PCB allows either pull up or pull down.
 - Test on appliance with integrated wifi.  Will extra bus traffic / processor load cause problems. 
 
 Related projects:
