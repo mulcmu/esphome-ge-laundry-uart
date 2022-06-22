@@ -13,7 +13,7 @@ Current Status:
 
 TODO:
 
-- Post STL for enclosure.  Update Lid for LED & button holes
+- Update case lid for LED & button holes
 - Add #define or options of some sort to configure header for either washer or dryer.
 - Add missing cycle types / settings from simbaja/gehome
 - Add a "setup" yaml & .h.  Broadcast message to see what endpoints respond and check to make sure necessary erds are present. 
