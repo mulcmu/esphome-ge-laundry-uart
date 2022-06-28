@@ -11,6 +11,20 @@ Current Status:
 ![Untitled](https://user-images.githubusercontent.com/10102873/147993815-92dd5a8d-6161-4f82-92d9-c3f3c9e52dda.png)
 
 
+# WINDOWS 10:
+# follow instructions here:
+https://esphome.io/guides/installing_esphome.html
+# create secrets.yaml file
+# then do this or similar:
+esphome run esphome-ge-dryer-uart.yml
+
+# Windows 10 (msys2) non-working instructions
+# WARNING: does not work as eventually fails with termios dependency problem
+pacman -Syu
+pacman -S pactoys
+pacboy -S python python-pip python-devel python-cryptography rust
+pip install esphome
+
 TODO:
 
 - Add #define or options of some sort to configure header for either washer or dryer.

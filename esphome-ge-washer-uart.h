@@ -216,7 +216,7 @@ class component_geUART :
         this->textsensor_DoorLock= new TextSensor();  
     }
     
-    uint16_t crc16geabus_bit(uint16_t crc, void const *mem, size_t len) {
+    uint16_t crc16geabus_bit(uint16_t crc, unsigned char const *mem, size_t len) {
         unsigned char const *data = mem;
         if (data == NULL)
             return 0xe300;
