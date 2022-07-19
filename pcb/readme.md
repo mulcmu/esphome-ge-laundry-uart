@@ -30,8 +30,8 @@ Ran DRC, didn't see the unconnected nets tab.  Some of the grounds were not conn
 | D6, Optional                        | 1    | -     | 5mm Light emitting diode                                     | Generic                                                      |
 | D7,                                 | 1    | -     | Bidirectional  TVS diode D_SMA                               | Mouser<br />[603-SMAJ20CA/TR13](https://www.mouser.com/ProductDetail/603-SMAJ20CA-TR13) |
 | F1,                                 | 1    | -     | Resettable fuse, polymeric positive  temperature coefficient 1210 | Mouser<br />[652-MF-USMF020-2](https://www.mouser.com/ProductDetail/652-MF-USMF020-2) |
-| J1,                                 | 1    | -     | 5V SMPS BUCK Remove Pot and solder jumper                    | Amazon X002R5CJAB                                            |
-| J2,                                 | 1    | -     | RJ connector, 8P8C Generic                                   | Amazon<br />X001RVBL37                                       |
+| J1,                                 | 1    | -     | 5V SMPS BUCK Remove Pot and solder jumper                    | Amazon B08R6337QY                                            |
+| J2,                                 | 1    | -     | RJ connector, 8P8C Generic                                   | Amazon<br /B07CWJZSPC                                       |
 | Q1, Q2,                             | 2    |       | Si2309CDS P-MOSFET transistor,  gate/source/drain SOT-23     | Mouser<br />[781-SI2309CDS-E3](https://www.mouser.com/ProductDetail/781-SI2309CDS-E3) |
 | R1,                                 | 1    | DNP   | Resistor 0805                                                | Generic                                                      |
 | R2,                                 | 1    | 1M    | Resistor 0805                                                | Generic                                                      |
