@@ -5,9 +5,7 @@ Integrating a GE washer & dryer with Home Assistant using ESPHome.  The GE W&D h
 
 - ESP32 interface circuit built on custom PCB and tested.  My dryer uses half duplex serial connection (GEA2) and washer uses full duplex (GEA3).  
 
-- ESPHome code is working for W&D status items and remaining cycle time.  
-
-![Untitled](https://user-images.githubusercontent.com/10102873/147993815-92dd5a8d-6161-4f82-92d9-c3f3c9e52dda.png)
+- This branch starts implementation as espHome external component.  *Custom components were removed in 2025*
 
 * [GE Appliances](https://github.com/geappliances) / [FirstBuild](https://firstbuild.com/inventions/home-assistant-adapter/) started releasing hardware and protocol information, picking up where the old GEMakers left off.  They implement GEA2 and GEA3 in Arduino cpp and Home Assistant MQTT interface.
 * I bought a GE dishwasher.

@@ -1,4 +1,1 @@
-# ignore wifi credentials
-secrets.yaml
-sample printer output.txt
-*.txt
+/captures

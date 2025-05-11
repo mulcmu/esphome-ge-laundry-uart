@@ -1,0 +1,197 @@
+substitutions:
+  name: dryer
+  upper_name: Dryer
+
+esphome:
+  name: ${name}
+  
+esp32:
+  board: esp32-s3-devkitc-1
+  framework:
+    type: esp-idf
+
+
+
+# Enable logging via web interface only
+logger:
+  baud_rate: 115200 
+  hardware_uart: USB_SERIAL_JTAG
+
+# Enable Home Assistant API
+api:
+
+ota:
+  password: !secret esp_home_ota_pw
+  platform: esphome
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  
+  # Optional manual IP
+  manual_ip:
+    static_ip: 192.168.0.203
+    gateway: 192.168.0.9
+    subnet: 255.255.255.0
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  #ap:
+  #  ssid: ${upper_name} Fallback Hotspot
+  #  password: !secret esp_home_captive_pw
+
+#captive_portal:
+
+# Sync time with Home Assistant.
+time:
+  - platform: homeassistant
+    id: homeassistant_time
+
+#Half Duplex Config
+uart:
+  id: uart_gea2
+  tx_pin: 
+    number: GPIO18
+    inverted: true
+  rx_pin: 
+    number: GPIO19
+    inverted: true
+  baud_rate: 19200
+  debug:
+    direction: BOTH
+    after:
+        timeout: 50ms
+    sequence:
+      - lambda:  UARTDebug::log_hex(direction, bytes, ' ');
+
+
+#Full Duplex GEA3 Config      
+#uart:
+#  - id: uart_gea3
+#    tx_pin: 
+#      number: GPIO17
+#      inverted: false
+#    rx_pin: 
+#      number: GPIO16
+#      inverted: false
+#    baud_rate: 230400
+#    debug:
+#      direction: BOTH
+#      after:
+#          timeout: 50ms
+#      sequence:
+#        - lambda:  UARTDebug::log_hex(direction, bytes, ' ');
+#  
+
+external_components:
+  - source: local_components
+
+gea_adapter:  
+  id: gea_adapter_ID
+  uart_id: uart_gea2
+  appliance: dryer
+
+sensor:
+  - platform: gea_adapter
+    type: remaining_cycle_time
+    name: ${upper_name} Time Remaining
+    unit_of_measurement: min
+    accuracy_decimals: 1
+    icon: mdi:progress-clock
+#   - platform: gea_adapter
+#     type: cycle_count
+#     name: ${upper_name} Cycle Count
+#     accuracy_decimals: 0
+#     icon: mdi:progress-clock        
+  - platform: uptime
+    name: ${upper_name} Uptime
+    entity_category: "diagnostic"
+  - platform: wifi_signal
+    name: ${upper_name} WiFi Signal
+    update_interval: 60s
+    entity_category: "diagnostic"    
+
+
+text_sensor:
+
+  - platform: gea_adapter
+    type: state
+    name: ${upper_name} State
+    icon: mdi:tumble-dryer
+    erd: 0x2001
+  - platform: gea_adapter
+    type: cycle    
+    name: ${upper_name} Cycle
+    icon: mdi:tumble-dryer
+  - platform: gea_adapter
+    type: sub_state    
+    name: ${upper_name} SubState
+    icon: mdi:tumble-dryer
+  - platform: gea_adapter
+    type: dryness_setting
+    name: ${upper_name} Dryness Setting
+    icon: mdi:water-circle
+  # - platform: gea_adapter
+  #   type: spin_setting
+  #   name: ${upper_name} SPin Setting
+  #   icon: mdi:thermometer
+  - platform: wifi_info
+    ip_address:
+      name: ${upper_name} IP
+      entity_category: "diagnostic"
+
+binary_sensor:
+  - platform: gea_adapter
+    type: door
+    name: ${upper_name} Door
+    icon: mdi:door
+  - platform: gea_adapter
+    type: complete
+    name: ${upper_name} Cycle Complete
+    icon: mdi:tumble-dryer
+
+#  - platform: gpio
+#    pin:
+#      number: GPIO14
+#      mode:
+#        input: true
+#        pullup: true
+#      inverted: True        
+#    id: push_button
+#    filters:
+#      - delayed_off: 10ms
+#      - delayed_on: 10ms   
+#    on_press:
+#      then:
+#        - output.turn_on: green_led      
+#    on_release:
+#      then:
+#        - output.turn_off: green_led 
+        
+# output:
+#   - platform: gpio
+#     pin: GPIO2
+#     id: onboard_led
+#     inverted: True
+#   - platform: gpio
+#     pin: GPIO13
+#     id: green_led
+#     inverted: false    
+
+# #turn on green led on at boot and back off when connected to wifi
+# interval:
+#   - interval: 1s
+#     then:
+#       if:
+#         condition:
+#           wifi.connected:
+#         then:
+#           - output.turn_on: green_led
+#         else:
+#           - output.turn_off: green_led
+          
+button:
+  #HA button to restart.
+  - platform: restart
+    name: ${upper_name} Restart
+
+    
