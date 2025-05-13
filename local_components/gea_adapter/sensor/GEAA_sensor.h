@@ -16,10 +16,13 @@ namespace gea_adapter {
     public:
         void setup() override;
         void set_sensor_type(GEAASensorType sensor_type) { this->sensor_type_ = sensor_type; }
+        void set_erd(uint16_t erd) { this->erd_ = erd; }
         GEAASensorType get_sensor_type() { return this->sensor_type_; }
+        uint16_t get_erd() { return this->erd_; }
 
     protected:
         GEAASensorType sensor_type_;
+        uint16_t erd_;
     };
 
 } // namespace gea_adapter

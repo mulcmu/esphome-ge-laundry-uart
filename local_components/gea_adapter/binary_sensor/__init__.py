@@ -18,6 +18,7 @@ TYPES = {
     "door": SensorType.GEAA_SENSOR_DOOR,
     "door_lock": SensorType.GEAA_SENSOR_DOORLOCK,
     "complete": SensorType.GEAA_SENSOR_CYCLE_COMPLETE,
+    "unbalanced": SensorType.GEAA_SENSOR_UNBALANCED,
 }
 
 CONF_ERD = "erd"
@@ -30,6 +31,7 @@ CONF_VALID_WASHER_TYPES = [
     "complete",
     "door",
     "door_lock",
+    "unbalanced"
 ]
 
 CONF_VALID_DISHWASHER_TYPES = [
@@ -63,10 +65,8 @@ def default_erds(config):
                 )                    
             if config["type"] == "complete":
                 config["erd"] = 0x2002
-            elif config["type"] == "door_state":
-                config["erd"] = 0x2012
             elif config["type"] == "door":
-                config["erd"] = 0x2012 
+                config["erd"] = 0x2012
             else:
                 raise cv.Invalid(
                     f"Missing ERD for '{appliance_type}' sensor type '{config['type']}'. \nNotify code owner: Default ERD needs added to final validate check logic."
@@ -82,6 +82,8 @@ def default_erds(config):
                 config["erd"] = 0x2002
             elif config["type"] == "door":
                 config["erd"] = 0x2012 
+            elif config["erd"] == "unbalanced":
+                config["erd"] = 0x20A6                
             else:
                 raise cv.Invalid(
                     f"Missing ERD for '{appliance_type}' sensor type '{config['type']}'. \nNotify code owner: Default ERD needs added to final validate check logic."
@@ -101,5 +103,6 @@ async def to_code(config):
     await binary_sensor.register_binary_sensor(var, config)
     await cg.register_component(var, config)
     cg.add(var.set_binary_sensor_type(config[CONF_TYPE]))
+    cg.add(var.set_erd(config[CONF_ERD]))    
     await register_GEAA_child(var, config)
 

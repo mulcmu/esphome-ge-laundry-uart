@@ -23,10 +23,13 @@ namespace gea_adapter {
     public:
         void setup() override;
         void set_text_sensor_type(TextSensorType text_sensor_type) { this->text_sensor_type_ = text_sensor_type; }
+        void set_erd(uint16_t erd) { this->erd_ = erd; }
         TextSensorType get_text_sensor_type() { return this->text_sensor_type_; }
+        uint16_t get_erd() { return this->erd_; }
 
     protected:
         TextSensorType text_sensor_type_;
+        uint16_t erd_;
     };
 
 } // namespace gea_adapter

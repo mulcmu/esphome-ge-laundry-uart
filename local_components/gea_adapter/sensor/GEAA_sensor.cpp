@@ -8,9 +8,7 @@ namespace gea_adapter {
 
     void GEAASensor::setup()
     {
-        // this->parent_->subscribe_openings([=](uint16_t value) {
-        //     this->publish_state(value);
-        // });
+        this->parent_->add_read_erd_packet(this->erd_);
     }
 
 } // namespace gea_adapter

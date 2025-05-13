@@ -119,4 +119,5 @@ async def to_code(config):
     await text_sensor.register_text_sensor(var, config)
     await cg.register_component(var, config)
     cg.add(var.set_text_sensor_type(config[CONF_TYPE]))
+    cg.add(var.set_erd(config[CONF_ERD]))
     await register_GEAA_child(var, config)

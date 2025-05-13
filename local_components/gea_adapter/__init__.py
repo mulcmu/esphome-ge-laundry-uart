@@ -16,19 +16,22 @@ MULTI_CONF = True
 
 CONF_GEA_ADAPTER_ID = "gea_adapter_id"
 CONF_GEA_ADAPTER_TYPE = "appliance"
+CONF_GEA_ADAPTER_DESTINATION = "destination"
+CONF_GEA_ADAPTER_SOURCE = "source"
 
 gea_adapter_ns = cg.esphome_ns.namespace("gea_adapter")
 
-GEAAdapter = gea_adapter_ns.class_("GEAA_Component", cg.Component, uart.UARTDevice)
+GEAAdapter = gea_adapter_ns.class_("GEAA_Component", cg.PollingComponent, uart.UARTDevice)
 
 
 CONFIG_SCHEMA = cv.Schema(
     {
        cv.GenerateID(): cv.declare_id(GEAAdapter),
-       
        cv.Required(CONF_GEA_ADAPTER_TYPE): cv.one_of("washer", "dryer", "dishwasher", upper=False),
+       cv.Optional(CONF_GEA_ADAPTER_DESTINATION, default=0x24): cv.hex_int_range(min=0x01, max=0xDF),
+       cv.Optional(CONF_GEA_ADAPTER_SOURCE, default=0xBB): cv.hex_int_range(min=0x01, max=0xDF),
     }
-).extend(uart.UART_DEVICE_SCHEMA).extend(cv.COMPONENT_SCHEMA)
+).extend(uart.UART_DEVICE_SCHEMA).extend(cv.polling_component_schema("5s")).extend(cv.COMPONENT_SCHEMA)
 
 GEAA_CHILD_SCHMEA = cv.Schema(
     {
@@ -46,6 +49,9 @@ async def register_GEAA_child(var, config):
 async def to_code(config):
     var = cg.new_Pvariable(config[CONF_ID])
     await cg.register_component(var, config)
+    await uart.register_uart_device(var, config)
+    cg.add(var.set_destination_address(config[CONF_GEA_ADAPTER_DESTINATION]))
+    cg.add(var.set_source_address(config[CONF_GEA_ADAPTER_SOURCE]))
     
 
 
