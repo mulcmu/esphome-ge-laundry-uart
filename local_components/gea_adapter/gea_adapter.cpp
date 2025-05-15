@@ -181,6 +181,42 @@ void GEAA_Component::send_next_packet_() {
     } 
 }
 
+void GEAA_Component::sensor_send(uint16_t erd, float value) {
+
+    for (auto *sensor : this->sensors_) {
+        auto *gea_sensor = static_cast<GEAASensor *>(sensor);
+        if (gea_sensor->get_erd() == erd) {
+            gea_sensor->publish_state(value);
+            return;
+        }
+    }
+    ESP_LOGE(TAG, "Failed to find sensor for ERD %04X", erd);
+}
+
+void GEAA_Component::text_sensor_send(uint16_t erd, const char* value) {
+
+    for (auto *text_sensor : this->text_sensors_) {
+        auto *gea_text_sensor = static_cast<GEAATextSensor *>(text_sensor);
+        if (gea_text_sensor->get_erd() == erd) {
+            gea_text_sensor->publish_state(value);
+            return;
+        }
+    }
+    ESP_LOGE(TAG, "Failed to find text sensor for ERD %x", erd);
+}
+
+void GEAA_Component::binary_sensor_send(uint16_t erd, bool value) {
+
+    for (auto *binary_sensor : this->binary_sensors_) {
+        auto *gea_binary_sensor = static_cast<GEAABinarySensor *>(binary_sensor);
+        if (gea_binary_sensor->get_erd() == erd) {
+            gea_binary_sensor->publish_state(value);
+            return;
+        }
+    }
+    ESP_LOGE(TAG, "Failed to find binary sensor for ERD %04X", erd);
+}
+
 void GEAA_Component::process_packet_() {
 
     if (rx_buf.size() < 3) {
@@ -234,12 +270,27 @@ void GEAA_Component::process_packet_() {
         case 0x20A6: // Unbalanced
             laundry_binary_sensor_20A6();  // unbalanced
             break;
+        case 0xD003: //  complete
+            dishwasher_binary_sensor_D003();  // complete
+            break;
+        case 0x3038: //  rinse aid
+            dishwasher_binary_sensor_3038();  // rinse aid
+            break;
+        case 0x3085: // flood
+            dishwasher_binary_sensor_3085();  // flood
+            break;
 
         case 0x2003: // Total Cycles
             laundry_sensor_2003();  // total_cycles
             break;
         case 0x2007: // Remaining Cycle Time
             laundry_sensor_2007();  // remaining_cycle_time
+            break;
+        case 0xD004:
+            dishwasher_sensor_D004();  // remaining_cycle_time
+            break;
+        case 0x321A:
+            dishwasher_sensor_321A();  // delay start time
             break;
 
         case 0x2000: // State
@@ -268,6 +319,21 @@ void GEAA_Component::process_packet_() {
             break;
         case 0x2050: // Heat Setting
             laundry_text_sensor_2050();  // heat_setting
+            break;
+        case 0x3001: // State
+            dishwasher_text_sensor_3001();  // state
+            break;
+        case 0x300E: // Sub State
+            dishwasher_text_sensor_300E();  // sub_state
+            break;
+        case 0x321B: // Cycle
+            dishwasher_text_sensor_321B();  // cycle
+            break;
+        case 0x3003: // Reminder
+            dishwasher_text_sensor_3003();  // reminder
+            break;
+        case 0x3037: 
+            dishwasher_text_sensor_3037();  // door
             break;
 
         default:

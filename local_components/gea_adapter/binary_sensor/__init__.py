@@ -19,6 +19,8 @@ TYPES = {
     "door_lock": SensorType.GEAA_SENSOR_DOORLOCK,
     "complete": SensorType.GEAA_SENSOR_CYCLE_COMPLETE,
     "unbalanced": SensorType.GEAA_SENSOR_UNBALANCED,
+    "rinse_aid": SensorType.GEAA_SENSOR_RINSE_AID,
+    "flood": SensorType.GEAA_SENSOR_FLOOD,
 }
 
 CONF_ERD = "erd"
@@ -35,6 +37,9 @@ CONF_VALID_WASHER_TYPES = [
 ]
 
 CONF_VALID_DISHWASHER_TYPES = [
+    "complete",
+    "rinse_aid",
+    "flood",
     
 ]
 
@@ -43,6 +48,7 @@ CONFIG_SCHEMA = (
     .extend(
         {
             cv.Required(CONF_TYPE): cv.enum(TYPES, lower=True),
+            cv.Optional(CONF_ERD): cv.hex_int_range(min=0x2000, max=0xD222),
         }
     )
     .extend(GEAA_CHILD_SCHMEA)
@@ -92,6 +98,19 @@ def default_erds(config):
     elif appliance_type == "dishwasher":
         if config["type"] not in CONF_VALID_DISHWASHER_TYPES:
             raise cv.Invalid(f"{config['type']} is not a valid option for appliance type {appliance_type}.")
+        
+        if "erd" not in config:
+            if config["type"] == "complete":
+                config["erd"] = 0xD003
+            elif config["type"] == "rinse_aid":
+                config["erd"] = 0x3038
+            elif config["type"] == "flood":
+                config["erd"] = 0x3085
+            else:
+                raise cv.Invalid(
+                    f"Missing ERD for '{appliance_type}' sensor type '{config['type']}'. \nNotify code owner: Default ERD needs added to final validate check logic."
+                )
+        
         
     return config
 

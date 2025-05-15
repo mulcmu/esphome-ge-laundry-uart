@@ -15,6 +15,7 @@ CONF_TYPE = "type"
 TYPES = {
     "remaining_cycle_time": GEAASensorType.GEAA_REMAINING_CYCLE_TIME,
     "total_cycles":    GEAASensorType.GEAA_TOTOAL_CYCLES,
+    "delayed_start_time": GEAASensorType.GEAA_DELAYED_START_TIME,
 }
 
 CONF_ERD = "erd"
@@ -30,6 +31,9 @@ CONF_VALID_WASHER_TYPES = [
 ]
 
 CONF_VALID_DISHWASHER_TYPES = [
+    "remaining_cycle_time",
+    "delayed_start_time",
+    "total_cycles",
     
 ]
 
@@ -38,6 +42,7 @@ CONFIG_SCHEMA = (
     .extend(
         {
             cv.Required(CONF_TYPE): cv.enum(TYPES, lower=True),
+            cv.Optional(CONF_ERD): cv.hex_int_range(min=0x2000, max=0xD222),
         }
     )
     .extend(GEAA_CHILD_SCHMEA)
@@ -79,6 +84,18 @@ def default_erds(config):
     elif appliance_type == "dishwasher":
         if config["type"] not in CONF_VALID_DISHWASHER_TYPES:
             raise cv.Invalid(f"{config['type']} is not a valid option for appliance type {appliance_type}.")
+        
+        if "erd" not in config:
+            if config["type"] == "remaining_cycle_time":
+                config["erd"] = 0xD004
+            elif config["type"] == "delayed_start_time":
+                config["erd"] = 0x321A
+            elif config["type"] == "total_cycles":
+                config["erd"] = 0x3009
+            else:
+                raise cv.Invalid(
+                    f"Missing ERD for '{appliance_type}' sensor type '{config['type']}'. \nNotify code owner: Default ERD needs added to final validate check logic."
+                )
         
     return config
 

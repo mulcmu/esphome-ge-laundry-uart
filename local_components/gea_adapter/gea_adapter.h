@@ -86,17 +86,19 @@ namespace gea_adapter {
     void send_next_packet_();
     void process_packet_();
 
-    void laundry_binary_sensor_send(uint16_t erd, bool value);
+    void binary_sensor_send(uint16_t erd, bool value);
+    void sensor_send(uint16_t erd, float value);
+    void text_sensor_send(uint16_t erd, const char* value);
+    
+    
     void laundry_binary_sensor_2002();  // complete
     void laundry_binary_sensor_2012();  // door
     void laundry_binary_sensor_2013();  // door_locked
     void laundry_binary_sensor_20A6();  // unbalanced
 
-    void laundry_sensor_send(uint16_t erd, float value);
     void laundry_sensor_2003();  // total_cycles
     void laundry_sensor_2007();  // remaining_cycle_time
 
-    void laundry_text_sensor_send(uint16_t erd, const char* value);
     void laundry_text_sensor_2000();  // state
     void laundry_text_sensor_2001();  // sub_state
     void laundry_text_sensor_200A();  // cycle
@@ -106,6 +108,19 @@ namespace gea_adapter {
     void laundry_text_sensor_2018();  // rinse_setting
     void laundry_text_sensor_204D();  // dryness_setting
     void laundry_text_sensor_2050();  // heat_setting
+
+    void dishwasher_binary_sensor_D003();  // complete
+    void dishwasher_binary_sensor_3038();  // rinse_aid
+    void dishwasher_binary_sensor_3085();  // flood  
+
+    void dishwasher_sensor_D004();  //remaining cycle time
+    void dishwasher_sensor_321A();  //Delay Start min
+
+    void dishwasher_text_sensor_3001();  // state
+    void dishwasher_text_sensor_300E();  // sub_state
+    void dishwasher_text_sensor_321B();  // cycle
+    void dishwasher_text_sensor_3003();  // reminder
+    void dishwasher_text_sensor_3037();  // door  
 
   };
 

@@ -24,6 +24,8 @@ TYPES = {
     "soil_setting": TextSensorType.GEAA_SENSOR_SOIL_SETTING,
     "spin_setting": TextSensorType.GEAA_SENSOR_SPIN_SETTING,
     "temp_setting": TextSensorType.GEAA_SENSOR_TEMP_SETTING,
+    "reminder": TextSensorType.GEAA_SENSOR_REMINDER,
+    "door": TextSensorType.GEAA_SENSOR_DOOR_TXT,
 }
 
 CONF_ERD = "erd"
@@ -46,13 +48,18 @@ CONF_VALID_WASHER_TYPES = [
     "temp_setting",
 ]
 CONF_VALID_DISHWASHER_TYPES = [
+    "state",
+    "sub_state",
+    "cycle",
+    "reminder",
+    "door",
 
 ]
 
 CONFIG_SCHEMA = text_sensor.text_sensor_schema(GEAATextSensor).extend(
     {
         cv.Required(CONF_TYPE): cv.enum(TYPES, lower=True),
-        cv.Optional(CONF_ERD): cv.hex_int_range(min=0x2000, max=0x2222),
+        cv.Optional(CONF_ERD): cv.hex_int_range(min=0x2000, max=0xD222),
     }
 ).extend(GEAA_CHILD_SCHMEA)
 
@@ -108,6 +115,22 @@ def default_erds(config):
     elif appliance_type == "dishwasher":
         if config["type"] not in CONF_VALID_DISHWASHER_TYPES:
             raise cv.Invalid(f"{config['type']} is not a valid option for appliance type {appliance_type}.")
+        
+        if "erd" not in config:
+            if config["type"] == "state":
+                config["erd"] = 0x3001
+            elif config["type"] == "sub_state":
+                config["erd"] = 0x300e
+            elif config["type"] == "cycle":
+                config["erd"] = 0x321B
+            elif config["type"] == "reminder":
+                config["erd"] = 0x3003
+            elif config["type"] == "door":
+                config["erd"] = 0x3037
+            else:
+                raise cv.Invalid(
+                    f"Missing ERD for '{appliance_type}' sensor type '{config['type']}'. \nNotify code owner: Default ERD needs added to final validate check logic."
+                )
         
     return config
 

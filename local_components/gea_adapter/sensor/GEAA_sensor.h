@@ -9,7 +9,8 @@ namespace gea_adapter {
 
     enum GEAASensorType {
         GEAA_REMAINING_CYCLE_TIME,
-        GEAA_TOTOAL_CYCLES
+        GEAA_TOTOAL_CYCLES,
+        GEAA_DELAYED_START_TIME
    };
 
     class GEAASensor : public sensor::Sensor, public gea_adapter::GEAA_Child, public Component {

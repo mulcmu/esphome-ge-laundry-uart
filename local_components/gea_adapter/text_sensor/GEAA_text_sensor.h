@@ -16,7 +16,9 @@ namespace gea_adapter {
         GEAA_SENSOR_RINSE_SETTING,
         GEAA_SENSOR_SOIL_SETTING,
         GEAA_SENSOR_SPIN_SETTING,
-        GEAA_SENSOR_TEMP_SETTING
+        GEAA_SENSOR_TEMP_SETTING,
+        GEAA_SENSOR_REMINDER,
+        GEAA_SENSOR_DOOR_TXT
     };
     class GEAATextSensor : public text_sensor::TextSensor, public gea_adapter::GEAA_Child, public Component {
 

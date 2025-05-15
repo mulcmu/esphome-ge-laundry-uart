@@ -12,7 +12,10 @@ namespace gea_adapter {
         GEAA_SENSOR_DOOR,
         GEAA_SENSOR_DOORLOCK,
         GEAA_SENSOR_CYCLE_COMPLETE,
-        GEAA_SENSOR_UNBALANCED
+        GEAA_SENSOR_UNBALANCED,
+        GEAA_SENSOR_RINSE_AID,
+        GEAA_SENSOR_FLOOD
+
     };
 
     class GEAABinarySensor : public binary_sensor::BinarySensor, public gea_adapter::GEAA_Child, public Component {
