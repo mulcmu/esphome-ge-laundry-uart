@@ -76,7 +76,7 @@ def default_erds(config):
             elif config["type"] == "dryness_setting":
                 config["erd"] = 0x204d
             elif config["type"] == "heat_setting":
-                senconfigsor["erd"] = 0x2050
+                config["erd"] = 0x2050
             else:
                 raise cv.Invalid(
                     f"Missing ERD for '{appliance_type}' sensor type '{config['type']}'. \nNotify code owner: Default ERD needs added to final validate check logic."

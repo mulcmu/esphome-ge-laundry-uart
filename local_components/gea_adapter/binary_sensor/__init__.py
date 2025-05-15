@@ -82,7 +82,7 @@ def default_erds(config):
                 config["erd"] = 0x2002
             elif config["type"] == "door":
                 config["erd"] = 0x2012 
-            elif config["erd"] == "unbalanced":
+            elif config["type"] == "unbalanced":
                 config["erd"] = 0x20A6                
             else:
                 raise cv.Invalid(

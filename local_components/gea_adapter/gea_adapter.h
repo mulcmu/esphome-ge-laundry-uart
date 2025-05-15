@@ -19,12 +19,12 @@ namespace gea_adapter {
   class GEAA_Component;
   typedef Parented<GEAA_Component> GEAA_Child;  
 
-  class GEAA_Component :public PollingComponent, public uart::UARTDevice {
+  class GEAA_Component :public Component, public uart::UARTDevice {
 
   public:
     void setup() override;
     void loop() override;
-    void update() override;
+    // float get_loop_priority() const override {return 2.0f; }  // increse default priority
     void dump_config() override;
     float get_setup_priority() const override { return esphome::setup_priority::LATE; }
     
@@ -45,14 +45,16 @@ namespace gea_adapter {
     uint8_t destination_address_;
     uint8_t source_address_;
 
+    bool processing_packet_ = false;
+
     static constexpr size_t ERD_PACKET_SIZE = 32;
     static constexpr size_t RX_BUFFER_SIZE = 128;
     static constexpr size_t CRC_SEED = 0xE300;
     
     static constexpr uint8_t GEA_ESC = 0xE0;
-    static constexpr uint8_t GEA_STX = 0xE1;
-    static constexpr uint8_t GEA_ETX = 0xE2;
-    static constexpr uint8_t GEA_ACK = 0xE3;
+    static constexpr uint8_t GEA_ACK = 0xE1;
+    static constexpr uint8_t GEA_STX = 0xE2;
+    static constexpr uint8_t GEA_ETX = 0xE3;
 
     std::list<std::vector<uint8_t>> read_erd_packet_list_; 
     std::list<std::vector<uint8_t>>::iterator read_erd_packet_list_it_;
@@ -82,6 +84,28 @@ namespace gea_adapter {
     bool needs_escape_(uint8_t b) {return (b & 0xFC) == GEA_ESC;}
 
     void send_next_packet_();
+    void process_packet_();
+
+    void laundry_binary_sensor_send(uint16_t erd, bool value);
+    void laundry_binary_sensor_2002();  // complete
+    void laundry_binary_sensor_2012();  // door
+    void laundry_binary_sensor_2013();  // door_locked
+    void laundry_binary_sensor_20A6();  // unbalanced
+
+    void laundry_sensor_send(uint16_t erd, float value);
+    void laundry_sensor_2003();  // total_cycles
+    void laundry_sensor_2007();  // remaining_cycle_time
+
+    void laundry_text_sensor_send(uint16_t erd, const char* value);
+    void laundry_text_sensor_2000();  // state
+    void laundry_text_sensor_2001();  // sub_state
+    void laundry_text_sensor_200A();  // cycle
+    void laundry_text_sensor_2015();  // soil_setting 
+    void laundry_text_sensor_2016();  // temp_setting
+    void laundry_text_sensor_2017();  // spin_setting
+    void laundry_text_sensor_2018();  // rinse_setting
+    void laundry_text_sensor_204D();  // dryness_setting
+    void laundry_text_sensor_2050();  // heat_setting
 
   };
 

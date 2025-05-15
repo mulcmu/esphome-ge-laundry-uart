@@ -7,8 +7,11 @@
 #include <stdint.h>
 #include <string>
 #include <list>
+#include <thread>
 #include <vector>
 #include "esphome/components/uart/uart_debugger.h"
+
+#include "driver/uart.h"
 
 
 namespace esphome {
@@ -17,32 +20,69 @@ namespace gea_adapter {
 static const char *TAG = "gea_adapter.component";
 
 void GEAA_Component::setup(){
-
     rx_buf.reserve(128);
 
-    this->set_update_interval(1000); // Set the update interval to 1 second
+    //esp-idf call, default value was too slow for the GEA_ACK to get sent
+    uart_set_rx_timeout(0,1);
 
+    set_interval("send_packet", 500, [this]() {
+        if (read_erd_packet_list_.size() > 0) {
+            send_next_packet_();
+        }
+    });
+    
 }
 
 void GEAA_Component::loop(){
     
-   
-}
+    uint8_t b;
 
-void GEAA_Component::update() {
-    if (this->read_erd_packet_list_.empty()) {
+    // ESP_LOGD(TAG, "loop %d", millis());
+
+    if (available() == 0 || processing_packet_) {
         return;
     }
-    send_next_packet_();
 
+    while ( available() ) {
+        
+        read_byte(&b);
+
+        if (b == GEA_ESC) {
+            //read escaped data byte
+            read_byte(&b);
+            rx_buf.push_back(b);
+        }
+        else {  //unescaped control bytes
+            if (b == GEA_STX) {
+                rx_buf.clear();            
+            }
+            
+            rx_buf.push_back(b);
+
+            if (b == GEA_ETX && rx_buf.size() > 3)  {
+                if (rx_buf[1]==this->source_address_ ) { 
+                    write(GEA_ACK);
+                    processing_packet_ = true;
+                    defer([this]() {process_packet_();} ); 
+                    return;
+                } 
+            }
+
+        }
+    }
+            
+    if(rx_buf.size() == rx_buf.capacity() )  {
+        ESP_LOGE(TAG, "rx_buf was filled!");
+        rx_buf.clear();            
+    }
 }
 
 
 void GEAA_Component::dump_config(){
 
     ESP_LOGCONFIG(TAG, "GEAA Component");
-    ESP_LOGCONFIG(TAG, "  Destination address: %02X", this->destination_address_);
-    ESP_LOGCONFIG(TAG, "  Source address: %02X", this->source_address_);
+    ESP_LOGCONFIG(TAG, "  Destination address: 0x%02X", this->destination_address_);
+    ESP_LOGCONFIG(TAG, "  Source address: 0x%02X", this->source_address_);
     
     for (auto *text_sensor : this->text_sensors_) {
         LOG_TEXT_SENSOR("  ", "GEAA Text sensor", text_sensor);
@@ -120,7 +160,7 @@ void GEAA_Component::add_read_erd_packet(uint16_t erd) {
     for(size_t i = 1; i < packet.size(); ++i) {
         if (needs_escape_(packet[i])) {
             packet.insert(packet.begin() + i, GEA_ESC);
-            ++i; // Skip the next byte
+            ++i;
         }
     }
 
@@ -141,6 +181,102 @@ void GEAA_Component::send_next_packet_() {
     } 
 }
 
+void GEAA_Component::process_packet_() {
+
+    if (rx_buf.size() < 3) {
+        ESP_LOGE(TAG, "Packet too short");
+        processing_packet_ = false;
+        return;
+    }
+
+    if (rx_buf[2] != rx_buf.size()) {
+        ESP_LOGE(TAG, "Invalid packet length: expected %d, got %d", rx_buf[2], rx_buf.size());
+        processing_packet_ = false;
+        return;
+    }
+
+    uint16_t crc = tiny_crc16_block(rx_buf.data(), rx_buf.size() - 3);
+    uint16_t crc_received = (rx_buf[rx_buf.size() - 3] << 8) | rx_buf[rx_buf.size() - 2];
+
+    if (crc != crc_received) {
+        ESP_LOGE(TAG, "CRC mismatch: calculated %04X, received %04X", crc, crc_received);
+        processing_packet_ = false;
+        return;
+    }
+
+    //send ack if crc is ok
+    //write(GEA_ACK); too slow here???
+
+
+    std::string res;
+    size_t len = rx_buf.size();
+    char buf[6];
+    for (size_t i = 0; i < len; i++) {
+        sprintf(buf, " %02X ", rx_buf[i]);
+        res += buf;
+    }
+    
+    ESP_LOGD(TAG, "Packet:  %s ", res.c_str());
+
+
+
+    uint16_t erd = (rx_buf[6] << 8) | rx_buf[7];
+    switch (erd) {
+        case 0x2002: // State
+            laundry_binary_sensor_2002();  // complete
+            break;
+        case 0x2012: // Door
+            laundry_binary_sensor_2012();  // door
+            break;
+        case 0x2013: // Door Locked
+            laundry_binary_sensor_2013();  // door_locked
+            break;
+        case 0x20A6: // Unbalanced
+            laundry_binary_sensor_20A6();  // unbalanced
+            break;
+
+        case 0x2003: // Total Cycles
+            laundry_sensor_2003();  // total_cycles
+            break;
+        case 0x2007: // Remaining Cycle Time
+            laundry_sensor_2007();  // remaining_cycle_time
+            break;
+
+        case 0x2000: // State
+            laundry_text_sensor_2000();  // state
+            break;
+        case 0x2001: // Sub State
+            laundry_text_sensor_2001();  // sub_state
+            break;
+        case 0x200A: // Cycle
+            laundry_text_sensor_200A();  // cycle
+            break;
+        case 0x2015: // Soil Setting
+            laundry_text_sensor_2015();  // soil_setting
+            break;
+        case 0x2016: // Temp Setting
+            laundry_text_sensor_2016();  // temp_setting
+            break;
+        case 0x2017: // Spin Setting
+            laundry_text_sensor_2017();  // spin_setting
+            break;
+        case 0x2018: // Rinse Setting
+            laundry_text_sensor_2018();  // rinse_setting
+            break;
+        case 0x204D: // Dryness Setting
+            laundry_text_sensor_204D();  // dryness_setting
+            break;
+        case 0x2050: // Heat Setting
+            laundry_text_sensor_2050();  // heat_setting
+            break;
+
+        default:
+            ESP_LOGE(TAG, "Unknown ERD: %04X", erd);
+            break;
+    }
+
+    processing_packet_ = false;
+}
 
 } //namespace gea_adapter
 } //namespace esphome
