@@ -1,21 +1,21 @@
+![v2 Render](https://github.com/user-attachments/assets/d55249a1-68ba-4227-957a-7c0729faeb97)
+
 # esphome-ge-laundry-uart
-Integrating a GE washer & dryer with Home Assistant using ESPHome.  The GE W&D have an RJ45 style communication port with a serial interface.  Goal is to have ESP32 hardware powered by the communication port and provide remaining time and cycle done feedback to HA.
+Integrating a GE washer & dryer with Home Assistant using ESPHome.  The GE W&D have an RJ45 style communication port with a serial interface.  ESP32 hardware powered by the communication port provides remaining time and cycle done feedback to HA via ESPHome.
 
 ### Current Status:
 
-- ESP32 interface circuit built on custom PCB and tested.  My dryer uses half duplex serial connection (GEA2) and washer uses full duplex (GEA3).  
-
-- This branch implementation as espHome external component.  *Custom components were removed in 2025*
-
-- Washer and dryer working (at least as well as before).  Washer seems to respond to GEA2 formatted packets, at least for legacy ERDs.  Newer ERDs (unbalanced) don't get a response.
-
+- Updated version of PCB designed.  Uses same ESP32-C3 and pinout as FirstBuild adapter.  Everything is ready for assembly at JLCPCB.
+- Better case design
+- ESPHome implemented as an external component for better setup and support.
+- Washer, dryer, and dishwasher working (at least as well as before).  Washer and dishwasher seems to respond to GEA2 formatted packets, at least for legacy ERDs.  Newer ERDs (unbalanced / rinse aid status) don't get a response.
 * [GE Appliances](https://github.com/geappliances) / [FirstBuild](https://firstbuild.com/inventions/home-assistant-adapter/) started releasing hardware and protocol information, picking up where the old GEMakers left off.  They implement GEA2 and GEA3 in Arduino cpp and Home Assistant MQTT interface.
-* I bought a GE dishwasher.
+
 
 ### TODO:
 
+- Add start/stop controls
 - Use/copy GE Appliances GEA2/GEA3 implementation.
-- Add dishwasher support.
 - Add missing cycle types / settings from ~~simbaja/gehome~~ GE Appliances
 - Add build/installation/configuration instructions
 - Test on appliance with integrated wifi.  Will extra bus traffic / processor load cause problems.
