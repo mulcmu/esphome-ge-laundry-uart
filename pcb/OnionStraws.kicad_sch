@@ -4379,6 +4379,12 @@
 		(uuid "59ced4b3-e4c0-479e-899a-68d5c0f7a89a")
 	)
 	(junction
+		(at 48.26 146.05)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "5a437d23-5ce9-493e-aa9f-14c6938d9c47")
+	)
+	(junction
 		(at 335.915 167.64)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -4788,6 +4794,16 @@
 	)
 	(wire
 		(pts
+			(xy 36.83 146.05) (xy 48.26 146.05)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "10f8df61-a99e-4aa0-8e8c-d2bccd7bef4e")
+	)
+	(wire
+		(pts
 			(xy 260.35 43.18) (xy 260.35 50.8)
 		)
 		(stroke
@@ -4845,16 +4861,6 @@
 			(type default)
 		)
 		(uuid "13567744-77ab-4841-b0c6-039631b27d7f")
-	)
-	(wire
-		(pts
-			(xy 36.83 147.955) (xy 47.625 147.955)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "13593102-33e8-45d2-a8b3-87b443d08389")
 	)
 	(wire
 		(pts
@@ -5498,6 +5504,16 @@
 	)
 	(wire
 		(pts
+			(xy 58.42 144.78) (xy 58.42 146.05)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "4f15d2e1-8390-46df-94d6-444a035ef3ab")
+	)
+	(wire
+		(pts
 			(xy 158.75 134.62) (xy 171.45 134.62)
 		)
 		(stroke
@@ -6068,7 +6084,7 @@
 	)
 	(wire
 		(pts
-			(xy 47.625 147.955) (xy 47.625 149.86)
+			(xy 48.26 146.05) (xy 48.26 148.59)
 		)
 		(stroke
 			(width 0)
@@ -6268,7 +6284,7 @@
 	)
 	(wire
 		(pts
-			(xy 36.83 144.78) (xy 36.83 147.955)
+			(xy 36.83 144.78) (xy 36.83 146.05)
 		)
 		(stroke
 			(width 0)
@@ -7138,6 +7154,16 @@
 	)
 	(wire
 		(pts
+			(xy 58.42 146.05) (xy 48.26 146.05)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f88e625b-f71e-4769-b776-a9ea2a2f2cc5")
+	)
+	(wire
+		(pts
 			(xy 91.44 36.83) (xy 95.25 36.83)
 		)
 		(stroke
@@ -7187,7 +7213,7 @@
 		(uuid "ffa8a5dd-c4b3-4ac1-8e06-e3aba1c2fe3a")
 	)
 	(image
-		(at 254 231.14)
+		(at 254.254 312.928)
 		(scale 0.319381)
 		(uuid "2548550b-17f1-4ba4-9133-77b66f2f9d98")
 		(data "iVBORw0KGgoAAAANSUhEUgAADjsAAAe0CAIAAAAycNZhAAAAA3NCSVQICAjb4U/gAAAgAElEQVR4"
@@ -23404,6 +23430,16 @@
 		)
 		(uuid "99c2e0c8-3dce-4d99-a64f-17d17e84bd00")
 	)
+	(text "2.1 changes\n\nAdded ground test point\nChange D8 to bigger part\n\nmove  rj45 inboard 4.5mm\nsmaller 7805 or different ldo"
+		(exclude_from_sim no)
+		(at 402.844 248.412 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "a64c6202-901c-4b94-b281-958f1553cc0a")
+	)
 	(text "Washer\nGND\nNC\nHvoltage side\nRX/TX\nRX/TX\n+5V\nNC\n+16.2V"
 		(exclude_from_sim no)
 		(at -13.335 99.06 0)
@@ -24852,70 +24888,6 @@
 		)
 	)
 	(symbol
-		(lib_id "Mechanical:MountingHole")
-		(at 159.385 249.555 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp yes)
-		(fields_autoplaced yes)
-		(uuid "08d2780d-73f8-499b-bea0-b768891162eb")
-		(property "Reference" "H3"
-			(at 161.925 248.6465 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "MountingHole"
-			(at 161.925 251.4216 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "MountingHole:MountingHole_3.2mm_M3_DIN965"
-			(at 159.385 249.555 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 159.385 249.555 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 159.385 249.555 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(instances
-			(project ""
-				(path "/477311b9-8f81-40c8-9c55-fd87e287247a"
-					(reference "H3")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "Device:C")
 		(at 260.35 54.61 180)
 		(unit 1)
@@ -25945,7 +25917,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 47.625 149.86 0)
+		(at 48.26 148.59 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -25954,7 +25926,7 @@
 		(fields_autoplaced yes)
 		(uuid "300fc4b9-55bc-46f1-b09c-8db6b15214a8")
 		(property "Reference" "#PWR08"
-			(at 47.625 156.21 0)
+			(at 48.26 154.94 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -25963,7 +25935,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 47.625 154.4225 0)
+			(at 48.26 153.1525 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -25971,7 +25943,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 47.625 149.86 0)
+			(at 48.26 148.59 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -25980,7 +25952,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 47.625 149.86 0)
+			(at 48.26 148.59 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -25989,7 +25961,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 47.625 149.86 0)
+			(at 48.26 148.59 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -27290,6 +27262,73 @@
 			(project "OnionStraws"
 				(path "/477311b9-8f81-40c8-9c55-fd87e287247a"
 					(reference "C12")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector:TestPoint")
+		(at 58.42 144.78 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp yes)
+		(fields_autoplaced yes)
+		(uuid "5c0f2f9c-7d49-4bed-a929-0ae6b029dcc5")
+		(property "Reference" "TP7"
+			(at 59.817 140.5695 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "TestPoint"
+			(at 59.817 143.3446 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "TestPoint:TestPoint_Pad_D2.0mm"
+			(at 63.5 144.78 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 63.5 144.78 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 58.42 144.78 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "53617416-f112-416f-8fcc-984f3b59be49")
+		)
+		(instances
+			(project "OnionStraws"
+				(path "/477311b9-8f81-40c8-9c55-fd87e287247a"
+					(reference "TP7")
 					(unit 1)
 				)
 			)
@@ -28683,7 +28722,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Diode_SMD:D_SOD-523"
+		(property "Footprint" "Diode_SMD:D_SOD-123"
 			(at 289.56 55.88 0)
 			(effects
 				(font
@@ -28701,7 +28740,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "C2993047"
+		(property "Description" "C78479"
 			(at 289.56 55.88 0)
 			(effects
 				(font
@@ -29331,70 +29370,6 @@
 			(project "OnionStraws"
 				(path "/477311b9-8f81-40c8-9c55-fd87e287247a"
 					(reference "SW1")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Mechanical:MountingHole")
-		(at 160.02 242.57 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp yes)
-		(fields_autoplaced yes)
-		(uuid "aa982b43-16ef-4dda-a055-36faea17455b")
-		(property "Reference" "H4"
-			(at 162.56 241.6615 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "MountingHole"
-			(at 162.56 244.4366 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "MountingHole:MountingHole_3.2mm_M3_DIN965"
-			(at 160.02 242.57 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 160.02 242.57 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 160.02 242.57 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(instances
-			(project ""
-				(path "/477311b9-8f81-40c8-9c55-fd87e287247a"
-					(reference "H4")
 					(unit 1)
 				)
 			)
