@@ -1,4 +1,4 @@
-#include "..\gea_adapter.h"
+#include "../gea_adapter.h"
 #include "GEAA_binary_sensor.h"
 #include <stdint.h>
 

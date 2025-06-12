@@ -1,9 +1,9 @@
 #include "gea_adapter.h"
 #include "esphome/core/log.h"
 #include "esphome/core/defines.h"
-#include ".\sensor\GEAA_sensor.h"
-#include ".\binary_sensor\GEAA_binary_sensor.h"
-#include ".\text_sensor\GEAA_text_sensor.h"
+#include "./sensor/GEAA_sensor.h"
+#include "./binary_sensor/GEAA_binary_sensor.h"
+#include "./text_sensor/GEAA_text_sensor.h"
 #include <stdint.h>
 #include <string>
 #include <list>
