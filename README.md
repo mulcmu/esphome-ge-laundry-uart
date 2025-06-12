@@ -6,7 +6,7 @@ Integrating a GE washer & dryer with Home Assistant using ESPHome.  The GE W&D h
 
 ### Current Status:
 
-- Updated version of PCB designed.  Uses same ESP32-C3 and pinout as FirstBuild adapter.  Everything is ready for assembly at JLCPCB.
+- Version 2.0 of PCB designed and fabricated.  Uses same ESP32-C3 and pinout as FirstBuild adapter.  PCB assembly files ready for assembly at JLCPCB if you want to order your own.  About $15 per board.
 - Better case design
 - ESPHome implemented as an external component for better setup and support.
 - Washer, dryer, and dishwasher working (at least as well as before).  Washer and dishwasher seems to respond to GEA2 formatted packets, at least for legacy ERDs.  Newer ERDs (unbalanced / rinse aid status) don't get a response.
@@ -16,10 +16,12 @@ Integrating a GE washer & dryer with Home Assistant using ESPHome.  The GE W&D h
 ### TODO:
 
 - Add start/stop controls
+- Add magnets to v2 Case design
+- Finish v2.1 of pcb design.
 - Use/copy GE Appliances GEA2/GEA3 implementation.
 - Add missing cycle types / settings from ~~simbaja/gehome~~ GE Appliances
 - Add build/installation/configuration instructions
-- Test on appliance with integrated wifi.  Will extra bus traffic / processor load cause problems.
+- Update to use publish/subscribe instead of constant read polling
 - Change repository name again, external component flexible for other appliance types
 
 ### Related projects:
