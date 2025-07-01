@@ -23,7 +23,7 @@ void GEAA_Component::setup(){
     rx_buf.reserve(128);
 
     //esp-idf call, default value was too slow for the GEA_ACK to get sent
-    uart_set_rx_timeout(0,1);
+    uart_set_rx_timeout((uart_port_t)0,1);
 
     set_interval("send_packet", 500, [this]() {
         if (read_erd_packet_list_.size() > 0) {
