@@ -17,6 +17,7 @@ Integrating a GE washer & dryer with Home Assistant using ESPHome.  The GE W&D h
 
 - Add start/stop controls
 - Add magnets to v2 Case design
+- Add diagnostic function to ping appliance broadcast address
 - Finish v2.1 of pcb design.
 - Use/copy GE Appliances GEA2/GEA3 implementation.
 - Add missing cycle types / settings from ~~simbaja/gehome~~ GE Appliances
