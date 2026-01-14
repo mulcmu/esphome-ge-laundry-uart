@@ -1,0 +1,49 @@
+kibot:
+  version: 1
+
+outputs:
+  - name: gerbers
+    comment: Gerber files for PCB fabrication
+    type: gerber
+    dir: gerbers
+    options:
+      exclude_edge_layer: true
+      exclude_pads_from_silkscreen: false
+      use_aux_axis_as_origin: false
+      plot_sheet_reference: false
+      plot_footprint_refs: true
+      plot_footprint_values: true
+      force_plot_invisible_refs_vals: false
+      tent_vias: true
+      create_gerber_job_file: true
+    layers:
+      - F.Cu
+      - B.Cu
+      - F.Paste
+      - B.Paste
+      - F.Silkscreen
+      - B.Silkscreen
+      - F.Mask
+      - B.Mask
+      - Edge.Cuts
+
+  - name: drill
+    comment: Drill files for PCB fabrication
+    type: excellon
+    dir: drill
+    options:
+      metric_units: true
+      pth_and_npth_single_file: false
+      use_aux_axis_as_origin: false
+      minimal_header: false
+      mirror_y_axis: false
+      zeros_format: DECIMAL_FORMAT
+
+  - name: gerber_zip
+    comment: Gerber ZIP for fabrication
+    type: compress
+    dir: gerbers
+    options:
+      files:
+        - from_output: gerbers
+        - from_output: drill

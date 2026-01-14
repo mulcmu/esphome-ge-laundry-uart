@@ -1,0 +1,37 @@
+name: KiBot
+
+on:
+  push:
+    paths:
+      - 'pcb/**'
+  pull_request:
+    paths:
+      - 'pcb/**'
+  workflow_dispatch:
+
+jobs:
+  generate-gerbers:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run KiBot
+        uses: INTI-CMNB/KiBot@v2_k8
+        with:
+          config: pcb/kibot.yaml
+          dir: output
+          board: pcb/OnionStraws.kicad_pcb
+          schema: pcb/OnionStraws.kicad_sch
+
+      - name: Upload Gerbers
+        uses: actions/upload-artifact@v4
+        with:
+          name: gerbers
+          path: output/gerbers/
+
+      - name: Upload Drill Files
+        uses: actions/upload-artifact@v4
+        with:
+          name: drill
+          path: output/drill/
