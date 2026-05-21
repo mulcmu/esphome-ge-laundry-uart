@@ -1,0 +1,214 @@
+#Configureation mulcmu pcb version 2.x
+
+substitutions:
+  name: gea2_template
+  upper_name: GEA2 Template
+
+esphome:
+  name: ${name}
+  platformio_options:
+    board_build.flash_mode: dio
+  on_boot:
+    - priority: 800
+      then:
+        - light.turn_off: led1
+        
+esp32:
+  board: esp32-c3-devkitc-02
+  variant: esp32c3
+  framework:
+    type: esp-idf  
+
+logger:
+  baud_rate: 0 
+
+api:
+
+ota:
+  password: !secret esp_home_ota_pw
+  platform: esphome
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  
+time:
+  - platform: homeassistant
+    id: homeassistant_time
+
+uart:
+  id: uart_gea
+  tx_pin: 
+    number: GPIO5
+    inverted: true
+  rx_pin: 
+    number: GPIO10
+    inverted: true
+  baud_rate: 19200
+
+external_components:
+  - source: github://mguaylam/esphome-gea
+    components: [gea]
+
+gea:
+  id: gea_hub
+  uart_id: uart_gea
+  protocol: gea2  
+  src_address: 0xBB
+  dest_address: 0x24
+  erd_lookup: true
+
+sensor:
+  - platform: uptime
+    name: ${upper_name} Uptime
+    entity_category: "diagnostic"
+
+  - platform: wifi_signal
+    name: ${upper_name} WiFi Signal
+    update_interval: 60s
+    entity_category: "diagnostic"    
+
+  - platform: template
+    name: "GEA RX Bytes"
+    entity_category: diagnostic
+    accuracy_decimals: 0
+    lambda: 'return id(gea_hub).get_rx_bytes();'
+    update_interval: 30s
+
+  - platform: template
+    name: "GEA CRC Errors"
+    entity_category: diagnostic
+    accuracy_decimals: 0
+    lambda: 'return id(gea_hub).get_crc_errors();'
+    update_interval: 30s
+
+  - platform: template
+    name: "GEA TX Retries"
+    entity_category: diagnostic
+    accuracy_decimals: 0
+    lambda: 'return id(gea_hub).get_tx_retries();'
+    update_interval: 30s
+
+  - platform: template
+    name: "GEA Dropped Requests"
+    entity_category: diagnostic
+    accuracy_decimals: 0
+    lambda: 'return id(gea_hub).get_dropped_requests();'
+    update_interval: 30s
+
+text_sensor:
+  - platform: gea
+    gea_id: gea_hub
+    name: ${upper_name} Model
+    entity_category: "diagnostic"
+    erd: 0x0001
+    decode: ascii
+
+  
+  - platform: wifi_info
+    ip_address:
+      name: ${upper_name} IP
+      entity_category: "diagnostic"
+
+binary_sensor:
+  - platform: gea
+    gea_id: gea_hub
+    name: ${upper_name} Door
+    erd: 0x2012
+
+  - platform: gea
+    name: ${upper_name} Cycle Complete
+    icon: mdi:tumble-dryer
+    erd: 0x2002
+
+  - platform: template
+    name: "GEA Bus Connected"
+    entity_category: "diagnostic"
+    lambda: 'return id(gea_hub).is_bus_connected();'
+       
+button:
+  - platform: restart
+    name: ${upper_name} Restart
+
+output:
+  # GPIO2: Output for Red LED, active low
+  - platform: ledc
+    pin:
+      number: 2
+      inverted: true
+      ignore_strapping_warning: true
+    id: led1_output
+    max_power: 0.03
+
+  # GPIO3: Output for Green LED, active high
+  - platform: ledc
+    max_power: 0.03
+    pin: 
+      number: 3
+      inverted: false
+    id: led2_output
+
+  # GPIO10: Output for Yellow LED, active high
+  - platform: ledc
+    pin:
+      number: 4
+      inverted: false
+    id: led3_output
+    max_power: 0.06
+
+light:
+  - platform: monochromatic
+    name: "Red LED"
+    output: led1_output
+    id: led1
+    restore_mode: ALWAYS_OFF
+
+  - platform: monochromatic
+    name: "Green LED"
+    output: led2_output
+    id: led2
+    restore_mode: ALWAYS_OFF
+
+  - platform: monochromatic
+    name: "Yellow LED"
+    output: led3_output
+    id: led3
+    restore_mode: ALWAYS_OFF
+
+interval:
+  - interval: 1s
+    then:
+      - if:
+          condition:
+            wifi.connected:
+          then:
+            if:
+              condition:
+                light.is_off: led2
+              then:
+                - light.turn_on: led2
+          else:
+            if:
+              condition:
+                light.is_on: led2
+              then:
+                - light.turn_off: led2
+  - interval: 1s
+    then:
+      - if:
+          condition:
+            lambda: |-
+              return id(gea_hub).is_bus_connected();
+          then:
+            if:
+              condition:
+                light.is_off: led3
+              then:
+                - light.turn_on: led3
+          else:
+            if:
+              condition:
+                light.is_on: led3
+              then:
+                - light.turn_off: led3
+

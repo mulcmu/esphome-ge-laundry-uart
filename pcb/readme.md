@@ -1,3 +1,10 @@
+> [!IMPORTANT]
+>
+> Rev 2.0 and 2.1 PCBs have two issues.  
+>
+> * The RX and TX silkscreen markings are swapped.
+> * The U1 IC is prone to causing boot loops with the modern ESPhome.  Ordering PCBs without U1 populate is recommended.  For existing boards removal of U1 or cutting the small trace  between U1 Pin2 and the via will remove U1 from circuit and resolve boot loop issue.
+
 ### Rev 2.0
 
 Reworked design to be better suited for assembly.  DC/DC buck replaced with LDO.  ESP32-C3 module used to be compatibile with FirstBuild design/pinout.
@@ -5,6 +12,10 @@ Reworked design to be better suited for assembly.  DC/DC buck replaced with LDO.
 All assembly files ready for JLCPCB PCBA.
 
 ![v2 Render](https://github.com/user-attachments/assets/77eab417-817f-48a1-bfa4-fbe587ed5843)
+
+Fix for U1:
+
+![V2 fix](.\v2 fix.png)
 
 
 ### Rev 1.0
