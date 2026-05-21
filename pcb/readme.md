@@ -15,7 +15,7 @@ All assembly files ready for JLCPCB PCBA.
 
 Fix for U1:
 
-![V2 fix](.\v2 fix.png)
+![v2 fix.png](https://github.com/mulcmu/esphome-ge-laundry-uart/blob/main/pcb/v2%20fix.png?raw=true))
 
 
 ### Rev 1.0
