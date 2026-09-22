@@ -1,6 +1,10 @@
 /captures
 /local_components/gea_adapter/__pycache__
 *.pyc
-*.pyc
-
-/pcb/OnionStraws-backups
+__pycache__/
+*.kicad_prl
+*-backups/
+fp-info-cache
+project.db
+*.kicad_sch_old
+secrets.yaml
